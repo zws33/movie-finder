@@ -61,8 +61,6 @@ class MovieResultsFragment : Fragment() {
                         )
         )
 
-        viewModel.getPopularMovies()
-
     }
 
     override fun onDestroy() {
