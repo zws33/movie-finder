@@ -18,10 +18,15 @@ import me.zwsmith.moviefinder.presentation.extensions.isVisible
 class MovieResultsFragment : Fragment() {
 
     private val movieListViewState = arrayListOf<MovieResultsItemViewState>()
-    private val movieListAdapter = MovieResultAdapter(movieListViewState)
+    private val movieListAdapter = MovieResultsAdapter(movieListViewState)
 
     private lateinit var viewModel: MovieResultsViewModel
     private var compositeDisposable = CompositeDisposable()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel = ViewModelProviders.of(this).get(MovieResultsViewModel::class.java)
+    }
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -40,10 +45,6 @@ class MovieResultsFragment : Fragment() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(MovieResultsViewModel::class.java)
-    }
 
     override fun onStart() {
         super.onStart()

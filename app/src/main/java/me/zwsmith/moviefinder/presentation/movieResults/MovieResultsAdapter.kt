@@ -10,9 +10,9 @@ import kotlinx.android.synthetic.main.movie_results_item.view.*
 import me.zwsmith.moviefinder.R
 import me.zwsmith.moviefinder.presentation.extensions.inflate
 
-class MovieResultAdapter(
+class MovieResultsAdapter(
         private val movieResultsViewStates: ArrayList<MovieResultsItemViewState>
-) : RecyclerView.Adapter<MovieResultAdapter.MovieHolder>() {
+) : RecyclerView.Adapter<MovieResultsAdapter.MovieHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieHolder {
         val view = parent.inflate(R.layout.movie_results_item)
