@@ -44,7 +44,12 @@ class MovieListAdapter(
 
         fun bindViewState(viewState: MovieListItemViewState) {
             this.viewState = viewState
-            Picasso.get().load(viewState.imageUrl).into(view.poster_icon)
+            Picasso.get()
+                    .load(viewState.imageUrl)
+                    .fit()
+                    .centerCrop()
+                    .into(view.poster_icon)
+
             view.title_tv.text = viewState.title
             view.genres_tv.text = viewState.genres
         }

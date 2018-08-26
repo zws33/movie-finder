@@ -14,6 +14,13 @@ import me.zwsmith.moviefinder.R
  */
 class MovieResultsFragment : Fragment() {
 
+    private val movieListViewState = ArrayList<MovieListItemViewState>().apply {
+        for (i in 1..50) {
+            val listItem = MovieListItemViewState("Captain America $i", "Action, Adventure", imageUrl)
+            add(listItem)
+        }
+    }
+
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
@@ -24,11 +31,18 @@ class MovieResultsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        view.movie_results_rv.layoutManager = LinearLayoutManager(context)
+        with(view.movie_results_rv) {
+            val linearLayoutManager = LinearLayoutManager(context)
+            layoutManager = linearLayoutManager
+            val movieListAdapter = MovieListAdapter(movieListViewState)
+            adapter = movieListAdapter
+        }
     }
 
     companion object {
         private val TAG = MovieResultsFragment::class.java.simpleName
+        private const val imageUrl =
+                "https://www.android.com/static/2016/img/share/andy-lg.png"
 
         fun newInstance(): Fragment {
             return MovieResultsFragment()
