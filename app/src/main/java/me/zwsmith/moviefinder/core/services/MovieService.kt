@@ -7,15 +7,14 @@ import retrofit2.http.Path
 
 interface MovieService {
 
-    @GET("$BASE_URL/discover/movie?language=en-US&sort_by=popularity.desc&page=1")
+    @GET("discover/movie?language=en-US&sort_by=popularity.desc&page=1")
     fun getPopularMovies(): Single<PopularMoviesResponse>
 
-    @GET("$BASE_URL/movie/{id}")
+    @GET("movie/{id}")
     fun getMovieDetailsById(@Path("id") id: String): Single<MovieDetailsResponse>
 
     companion object {
         private val TAG = MovieService::class.java.simpleName
-        private const val BASE_URL = "https://api.themoviedb.org/3"
     }
 }
 
@@ -46,10 +45,10 @@ data class Result(
         @SerializedName("backdrop_path")
         val backdropPath: String,
         val popularity: Double,
-        @SerializedName("vote_average")
+        @SerializedName("vote_count")
         val voteCount: Int,
         val video: Boolean,
-        @SerializedName("")
+        @SerializedName("vote_average")
         val voteAverage: Double
 )
 
