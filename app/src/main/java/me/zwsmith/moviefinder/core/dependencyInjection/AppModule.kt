@@ -1,13 +1,11 @@
-package me.zwsmith.moviefinder.core
+package me.zwsmith.moviefinder.core.dependencyInjection
 
-import android.app.Application
 import android.content.Context
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.squareup.picasso.OkHttp3Downloader
 import com.squareup.picasso.Picasso
-import dagger.Component
 import dagger.Module
 import dagger.Provides
 import me.zwsmith.moviefinder.BuildConfig
@@ -18,16 +16,6 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
-/**
- * Created by RBI Engineers on 8/25/18.
- */
-
-@Singleton
-@Component(modules = [AppModule::class])
-interface AppComponent {
-    val application: MoveFinderApplication
-    val picasso: Picasso
-}
 
 @Module
 class AppModule(private val application: MoveFinderApplication) {
@@ -91,15 +79,6 @@ class AppModule(private val application: MoveFinderApplication) {
     fun providePicasso(context: Context, okHttpClient: OkHttpClient): Picasso {
         return Picasso.Builder(context)
                 .downloader(OkHttp3Downloader(okHttpClient))
-                .build()
-    }
-}
-
-class MoveFinderApplication : Application() {
-    val appComponent: AppComponent by lazy {
-        DaggerAppComponent
-                .builder()
-                .appModule(AppModule(this))
                 .build()
     }
 }

@@ -1,14 +1,27 @@
 package me.zwsmith.moviefinder.presentation.movieResults
 
 import android.arch.lifecycle.ViewModel
+import android.util.Log
 import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.subscribeBy
 import me.zwsmith.moviefinder.core.extensions.emitAtInterval
+import me.zwsmith.moviefinder.core.repositories.MovieRepository
+import javax.inject.Inject
 
-/**
- * Created by RBI Engineers on 8/26/18.
- */
-class MovieResultsViewModel : ViewModel() {
+class MovieResultsViewModel @Inject constructor(
+        private val movieRepository: MovieRepository
+) : ViewModel() {
+
+    fun getPopularMovies() {
+        movieRepository.getPopularMovies().subscribeBy(
+                onSuccess = { response ->
+                    Log.d(TAG, response.toString())
+                },
+                onError = { e ->
+                    Log.e(TAG, "Error message: ${e.message}", e)
+                }
+        )
+    }
 
     fun getMovieListViewStateStream(): Observable<MovieResultsViewState> {
         val success = MovieResultsViewState(
@@ -33,7 +46,7 @@ class MovieResultsViewModel : ViewModel() {
                 success,
                 error
         )
-        return emitAtInterval(viewStates, 2).observeOn(AndroidSchedulers.mainThread())
+        return emitAtInterval(viewStates, 2)
     }
 
     private fun getMovies(itemCount: Int): List<MovieResultsItemViewState> {

@@ -10,9 +10,6 @@ import kotlinx.android.synthetic.main.movie_results_item.view.*
 import me.zwsmith.moviefinder.R
 import me.zwsmith.moviefinder.presentation.extensions.inflate
 
-/**
- * Created by RBI Engineers on 8/25/18.
- */
 class MovieResultAdapter(
         private val movieResultsViewStates: ArrayList<MovieResultsItemViewState>
 ) : RecyclerView.Adapter<MovieResultAdapter.MovieHolder>() {

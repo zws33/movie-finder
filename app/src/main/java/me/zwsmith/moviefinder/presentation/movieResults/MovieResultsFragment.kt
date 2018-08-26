@@ -15,9 +15,6 @@ import kotlinx.android.synthetic.main.fragment_movie_results.view.*
 import me.zwsmith.moviefinder.R
 import me.zwsmith.moviefinder.presentation.extensions.isVisible
 
-/**
- * Created by RBI Engineers on 8/25/18.
- */
 class MovieResultsFragment : Fragment() {
 
     private val movieListViewState = arrayListOf<MovieResultsItemViewState>()
@@ -56,12 +53,15 @@ class MovieResultsFragment : Fragment() {
                         .doOnNext {
                             Log.d(TAG, it.toString())
                         }
-                        .subscribeOn(AndroidSchedulers.mainThread())
+                        .observeOn(AndroidSchedulers.mainThread())
                         .subscribeBy(
                                 onNext = { view?.update(it) },
                                 onError = { Log.e(TAG, "Error message: ${it.message}", it) }
                         )
         )
+
+        viewModel.getPopularMovies()
+
     }
 
     override fun onDestroy() {

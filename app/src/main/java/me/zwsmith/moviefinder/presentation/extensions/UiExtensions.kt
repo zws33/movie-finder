@@ -6,11 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import me.zwsmith.moviefinder.core.MoveFinderApplication
-
-/**
- * Created by RBI Engineers on 8/25/18.
- */
+import me.zwsmith.moviefinder.core.dependencyInjection.MoveFinderApplication
 
 val Activity.appComponent get() = (application as MoveFinderApplication).appComponent
 
