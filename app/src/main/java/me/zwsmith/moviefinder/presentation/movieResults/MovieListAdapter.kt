@@ -28,7 +28,6 @@ class MovieListAdapter(
         holder.bindViewState(movieListViewStates[position])
     }
 
-
     class MovieHolder(v: View) : RecyclerView.ViewHolder(v), View.OnClickListener {
 
         private var view: View = v
@@ -46,8 +45,6 @@ class MovieListAdapter(
             this.viewState = viewState
             Picasso.get()
                     .load(viewState.imageUrl)
-                    .fit()
-                    .centerCrop()
                     .into(view.poster_icon)
 
             view.title_tv.text = viewState.title

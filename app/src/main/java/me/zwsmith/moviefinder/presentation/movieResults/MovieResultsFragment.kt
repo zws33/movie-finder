@@ -42,7 +42,7 @@ class MovieResultsFragment : Fragment() {
     companion object {
         private val TAG = MovieResultsFragment::class.java.simpleName
         private const val imageUrl =
-                "https://www.android.com/static/2016/img/share/andy-lg.png"
+                "https://image.tmdb.org/t/p/w45/38bmEXmuJuInLs9dwfgOGCHmZ7l.jpg"
 
         fun newInstance(): Fragment {
             return MovieResultsFragment()
