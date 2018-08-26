@@ -1,25 +1,30 @@
 package me.zwsmith.moviefinder.presentation.movieResults
 
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.fragment_movie_results.view.*
 import me.zwsmith.moviefinder.R
+import me.zwsmith.moviefinder.presentation.extensions.isVisible
 
 /**
  * Created by RBI Engineers on 8/25/18.
  */
 class MovieResultsFragment : Fragment() {
 
-    private val movieListViewState = ArrayList<MovieListItemViewState>().apply {
-        for (i in 1..50) {
-            val listItem = MovieListItemViewState("Captain America $i", "Action, Adventure", imageUrl)
-            add(listItem)
-        }
-    }
+    private val movieListViewState = arrayListOf<MovieResultsItemViewState>()
+    private val movieListAdapter = MovieResultAdapter(movieListViewState)
+
+    private lateinit var viewModel: MovieResultsViewModel
+    private var compositeDisposable = CompositeDisposable()
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -34,15 +39,48 @@ class MovieResultsFragment : Fragment() {
         with(view.movie_results_rv) {
             val linearLayoutManager = LinearLayoutManager(context)
             layoutManager = linearLayoutManager
-            val movieListAdapter = MovieListAdapter(movieListViewState)
             adapter = movieListAdapter
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel = ViewModelProviders.of(this).get(MovieResultsViewModel::class.java)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val movieListViewStateStream = viewModel.getMovieListViewStateStream()
+        compositeDisposable.add(
+                movieListViewStateStream
+                        .doOnNext {
+                            Log.d(TAG, it.toString())
+                        }
+                        .subscribeOn(AndroidSchedulers.mainThread())
+                        .subscribeBy(
+                                onNext = { view?.update(it) },
+                                onError = { Log.e(TAG, "Error message: ${it.message}", it) }
+                        )
+        )
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        compositeDisposable.dispose()
+    }
+
+    private fun View.update(viewState: MovieResultsViewState) {
+        progress.isVisible = viewState.isLoadingVisible
+        error_group.isVisible = viewState.isErrorVisible
+        movie_results_rv.isVisible = viewState.movieResults != null
+        viewState.movieResults?.let {
+            movieListViewState.addAll(ArrayList(it))
+            movieListAdapter.notifyDataSetChanged()
         }
     }
 
     companion object {
         private val TAG = MovieResultsFragment::class.java.simpleName
-        private const val imageUrl =
-                "https://image.tmdb.org/t/p/w45/38bmEXmuJuInLs9dwfgOGCHmZ7l.jpg"
 
         fun newInstance(): Fragment {
             return MovieResultsFragment()

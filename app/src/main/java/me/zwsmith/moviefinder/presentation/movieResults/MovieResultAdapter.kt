@@ -6,32 +6,32 @@ import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.movie_list_item.view.*
+import kotlinx.android.synthetic.main.movie_results_item.view.*
 import me.zwsmith.moviefinder.R
 import me.zwsmith.moviefinder.presentation.extensions.inflate
 
 /**
  * Created by RBI Engineers on 8/25/18.
  */
-class MovieListAdapter(
-        private val movieListViewStates: ArrayList<MovieListItemViewState>
-) : RecyclerView.Adapter<MovieListAdapter.MovieHolder>() {
+class MovieResultAdapter(
+        private val movieResultsViewStates: ArrayList<MovieResultsItemViewState>
+) : RecyclerView.Adapter<MovieResultAdapter.MovieHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieHolder {
-        val view = parent.inflate(R.layout.movie_list_item)
+        val view = parent.inflate(R.layout.movie_results_item)
         return MovieHolder(view)
     }
 
-    override fun getItemCount(): Int = movieListViewStates.size
+    override fun getItemCount(): Int = movieResultsViewStates.size
 
     override fun onBindViewHolder(holder: MovieHolder, position: Int) {
-        holder.bindViewState(movieListViewStates[position])
+        holder.bindViewState(movieResultsViewStates[position])
     }
 
     class MovieHolder(v: View) : RecyclerView.ViewHolder(v), View.OnClickListener {
 
         private var view: View = v
-        private var viewState: MovieListItemViewState? = null
+        private var viewState: MovieResultsItemViewState? = null
 
         init {
             v.setOnClickListener(this)
@@ -41,7 +41,7 @@ class MovieListAdapter(
             Log.d("RecyclerView", viewState?.title)
         }
 
-        fun bindViewState(viewState: MovieListItemViewState) {
+        fun bindViewState(viewState: MovieResultsItemViewState) {
             this.viewState = viewState
             Picasso.get()
                     .load(viewState.imageUrl)
@@ -50,13 +50,5 @@ class MovieListAdapter(
             view.title_tv.text = viewState.title
             view.genres_tv.text = viewState.genres
         }
-
     }
 }
-
-
-data class MovieListItemViewState(
-        val title: String,
-        val genres: String,
-        val imageUrl: String
-)

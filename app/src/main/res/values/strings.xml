@@ -2,4 +2,7 @@
     <string name="app_name">Movie Finder</string>
     <string name="microphone_icon">microphone_icon</string>
     <string name="movie_icon">Movie Icon</string>
+    <string name="communication_error">Communication Error</string>
+    <string name="retry">Retry</string>
+    <string name="error_icon">Error Icon</string>
 </resources>
