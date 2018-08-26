@@ -4,6 +4,12 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
+apply plugin: 'kotlin-kapt'
+
+def localPropertiesFile = rootProject.file("local.properties")
+def localProperties = new Properties()
+localProperties.load(new FileInputStream(localPropertiesFile))
+
 android {
     compileSdkVersion 27
     defaultConfig {
@@ -15,7 +21,11 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
+        debug {
+            buildConfigField 'String', "ApiKey", localProperties.getProperty("TMDB_API_KEY")
+        }
         release {
+            buildConfigField 'String', "ApiKey", localProperties.getProperty("TMDB_API_KEY")
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -32,6 +42,7 @@ ext {
     rx_java = "2.1.14"
     rx_android = "2.0.2"
     rx_relay = "2.0.0"
+    rx_kotlin = "2.2.0"
 }
 
 dependencies {
@@ -67,10 +78,12 @@ dependencies {
     implementation "com.google.dagger:dagger-android-support:$dagger_version"
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
 
-    //RxJava
+    //Rx
     implementation "io.reactivex.rxjava2:rxjava:$rx_java"
     implementation "io.reactivex.rxjava2:rxandroid:$rx_android"
     implementation "com.jakewharton.rxrelay2:rxrelay:$rx_relay"
+    implementation "io.reactivex.rxjava2:rxkotlin:$rx_kotlin"
+    implementation "com.jakewharton.rxrelay2:rxrelay:2.0.0"
 
     implementation "joda-time:joda-time:2.9.9"
 

@@ -1,12 +1,16 @@
 package me.zwsmith.moviefinder.core
 
 import android.app.Application
+import android.content.Context
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.squareup.picasso.OkHttp3Downloader
+import com.squareup.picasso.Picasso
 import dagger.Component
 import dagger.Module
 import dagger.Provides
+import me.zwsmith.moviefinder.BuildConfig
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -20,8 +24,9 @@ import javax.inject.Singleton
 
 @Singleton
 @Component(modules = [AppModule::class])
-interface CoreComponent {
+interface AppComponent {
     val application: MoveFinderApplication
+    val picasso: Picasso
 }
 
 @Module
@@ -31,6 +36,10 @@ class AppModule(private val application: MoveFinderApplication) {
     fun provideApplication(): MoveFinderApplication {
         return application
     }
+
+    @Provides
+    @Singleton
+    fun provideContext(): Context = application.applicationContext
 
     @Provides
     @Singleton
@@ -52,15 +61,45 @@ class AppModule(private val application: MoveFinderApplication) {
     @Provides
     @Singleton
     fun provideApiKeyInterceptor(): Interceptor {
+        return Interceptor { chain ->
+            val original = chain.request()
 
+            val newUrl = original.url()
+                    .newBuilder()
+                    .addQueryParameter("api_key", BuildConfig.ApiKey)
+                    .build()
+
+            val newRequest = original
+                    .newBuilder()
+                    .url(newUrl)
+                    .build()
+
+            chain.proceed(newRequest)
+        }
     }
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient {
-        OkHttpClient.Builder()
-                .
+    fun provideOkHttpClient(apiKeyInterceptor: Interceptor): OkHttpClient {
+        return OkHttpClient.Builder()
+                .addInterceptor(apiKeyInterceptor)
+                .build()
+    }
+
+    @Provides
+    @Singleton
+    fun providePicasso(context: Context, okHttpClient: OkHttpClient): Picasso {
+        return Picasso.Builder(context)
+                .downloader(OkHttp3Downloader(okHttpClient))
+                .build()
     }
 }
 
-class MoveFinderApplication : Application()
+class MoveFinderApplication : Application() {
+    val appComponent: AppComponent by lazy {
+        DaggerAppComponent
+                .builder()
+                .appModule(AppModule(this))
+                .build()
+    }
+}

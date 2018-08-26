@@ -1,14 +1,18 @@
 package me.zwsmith.moviefinder.presentation.extensions
 
+import android.app.Activity
 import android.support.annotation.LayoutRes
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import me.zwsmith.moviefinder.core.MoveFinderApplication
 
 /**
  * Created by RBI Engineers on 8/25/18.
  */
+
+val Activity.appComponent get() = (application as MoveFinderApplication).appComponent
 
 var View.isVisible: Boolean
     get() = visibility == View.VISIBLE
