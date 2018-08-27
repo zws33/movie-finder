@@ -9,7 +9,6 @@ import dagger.Module
 import dagger.multibindings.IntoMap
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.toCompletable
-import me.zwsmith.moviefinder.core.extensions.emitAtInterval
 import me.zwsmith.moviefinder.core.interactors.GetPopularMoviesInteractor
 import me.zwsmith.moviefinder.core.interactors.RefreshPopularMoviesInteractor
 import javax.inject.Inject
@@ -19,77 +18,83 @@ import kotlin.reflect.KClass
 
 
 class MovieResultsViewModel @Inject constructor(
-        refreshPopularMoviesInteractor: RefreshPopularMoviesInteractor,
+        private val refreshPopularMoviesInteractor: RefreshPopularMoviesInteractor,
         getPopularMoviesInteractor: GetPopularMoviesInteractor
 ) : ViewModel() {
 
     val intentRelay = PublishRelay.create<MovieResultsIntent>()
 
-    val stateStream = buildMovieResultsStateStream(
+    private val stateStream = buildMovieResultsStateStream(
             intentStream = intentRelay,
             refreshPopularMovies =
             { refreshPopularMoviesInteractor.refreshPopularMovies() }.toCompletable(),
             movieResultsStream = getPopularMoviesInteractor.popularMoviesStream
     )
 
-
-    fun getMovieListViewStateStream(): Observable<MovieResultsViewState> {
-        val success = MovieResultsViewState(
-                isLoadingVisible = false,
-                isErrorVisible = false,
-                movieResults = getMovies(10)
-        )
-        val loading = MovieResultsViewState(
-                isLoadingVisible = true,
-                isErrorVisible = false,
-                movieResults = null
-        )
-        val error = MovieResultsViewState(
-                isLoadingVisible = false,
-                isErrorVisible = true,
-                movieResults = null
-        )
-        val viewStates = listOf(
-                loading,
-                error,
-                loading,
-                success,
-                error
-        )
-        return emitAtInterval(viewStates, 2)
+    fun refreshData() {
+        refreshPopularMoviesInteractor.refreshPopularMovies()
     }
 
-    private fun getMovies(itemCount: Int): List<MovieResultsItemViewState> {
-        val list = arrayListOf<MovieResultsItemViewState>()
-        for (i in 1..itemCount) {
-            val movieListItemViewState = MovieResultsItemViewState(
-                    "Movie Title $i",
-                    "Action, Adventure",
-                    imageUrl,
-                    MovieResultsIntent.NavigateToMovieDetails("1")
-            )
-            list.add(movieListItemViewState)
+    fun getMovieListViewStateStream(): Observable<MovieResultsViewState> {
+        return stateStream.map { state ->
+            when (state) {
+                is MovieResultsState.Success -> {
+                    MovieResultsViewState(
+                            isLoadingVisible = false,
+                            isErrorVisible = false,
+                            retryIntent = null,
+                            movieResults = state.movieResults.map { movie ->
+                                movie.toResultItemViewState()
+                            }
+                    )
+                }
+                MovieResultsState.Loading -> {
+                    MovieResultsViewState(
+                            isLoadingVisible = true,
+                            isErrorVisible = false,
+                            retryIntent = null,
+                            movieResults = null
+                    )
+                }
+                MovieResultsState.Error -> {
+                    MovieResultsViewState(
+                            isLoadingVisible = true,
+                            isErrorVisible = true,
+                            retryIntent = MovieResultsIntent.RefreshPopularMovies,
+                            movieResults = null
+                    )
+                }
+                is MovieResultsState.NavigateToMovieDetails -> TODO()
+            }
         }
-        return list
+    }
+
+    private fun Movie.toResultItemViewState(): MovieResultsItemViewState {
+        return MovieResultsItemViewState(
+                title,
+                genres.joinToString(", "),
+                posterPath?.let { IMAGE_BASE_URL + it },
+                MovieResultsIntent.NavigateToMovieDetails(id)
+        )
     }
 
     companion object {
         private val TAG = MovieResultsViewModel::class.java.simpleName
-        private const val imageUrl =
-                "https://image.tmdb.org/t/p/w45/38bmEXmuJuInLs9dwfgOGCHmZ7l.jpg"
+        private const val IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w45"
     }
 }
 
 data class MovieResultsViewState(
         val isLoadingVisible: Boolean,
         val isErrorVisible: Boolean,
+        val retryIntent: MovieResultsIntent.RefreshPopularMovies?,
         val movieResults: List<MovieResultsItemViewState>?
 )
 
 data class MovieResultsItemViewState(
         val title: String,
         val genres: String,
-        val imageUrl: String,
+        val imageUrl: String?,
         val intent: MovieResultsIntent
 )
 
@@ -103,7 +108,11 @@ class ViewModelFactory @Inject constructor(
     override fun <T : ViewModel> create(modelClass: Class<T>): T = viewModels[modelClass]?.get() as T
 }
 
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
+@Target(
+        AnnotationTarget.FUNCTION,
+        AnnotationTarget.PROPERTY_GETTER,
+        AnnotationTarget.PROPERTY_SETTER
+)
 @kotlin.annotation.Retention(AnnotationRetention.RUNTIME)
 @MapKey
 internal annotation class ViewModelKey(val value: KClass<out ViewModel>)

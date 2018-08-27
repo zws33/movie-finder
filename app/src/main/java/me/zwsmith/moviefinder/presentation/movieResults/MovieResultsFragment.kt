@@ -13,6 +13,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.fragment_movie_results.view.*
 import me.zwsmith.moviefinder.R
+import me.zwsmith.moviefinder.core.dependencyInjection.MoveFinderApplication
 import me.zwsmith.moviefinder.presentation.extensions.isVisible
 import javax.inject.Inject
 
@@ -29,7 +30,8 @@ class MovieResultsFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(MovieResultsViewModel::class.java)
+        (activity!!.application as MoveFinderApplication).injector.inject(this)
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(MovieResultsViewModel::class.java)
     }
 
     override fun onCreateView(

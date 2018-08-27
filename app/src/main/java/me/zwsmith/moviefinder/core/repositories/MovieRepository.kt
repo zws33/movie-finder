@@ -5,8 +5,8 @@ import com.jakewharton.rxrelay2.PublishRelay
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.rxkotlin.subscribeBy
-import me.zwsmith.moviefinder.core.common.Result
-import me.zwsmith.moviefinder.core.common.wrapInResult
+import me.zwsmith.moviefinder.core.common.ResponseStatus
+import me.zwsmith.moviefinder.core.common.wrapResponse
 import me.zwsmith.moviefinder.core.services.MovieDetailsResponse
 import me.zwsmith.moviefinder.core.services.MovieService
 import me.zwsmith.moviefinder.core.services.PopularMoviesResponse
@@ -16,9 +16,10 @@ class MovieRepository @Inject constructor(private val movieService: MovieService
     fun refreshPopularMovies() {
         movieService
                 .getPopularMovies()
-                .wrapInResult()
+                .wrapResponse()
                 .subscribeBy(
                         onSuccess = { popularMoviesResult ->
+                            Log.i(TAG, popularMoviesResult.toString())
                             popularMoviesRelay.accept(popularMoviesResult)
                         },
                         onError = { e: Throwable ->
@@ -27,9 +28,9 @@ class MovieRepository @Inject constructor(private val movieService: MovieService
                 )
     }
 
-    private val popularMoviesRelay = PublishRelay.create<Result<PopularMoviesResponse>>()
+    private val popularMoviesRelay = PublishRelay.create<ResponseStatus<PopularMoviesResponse>>()
 
-    val popularMoviesStream: Observable<Result<PopularMoviesResponse>> by lazy {
+    val popularMoviesStream: Observable<ResponseStatus<PopularMoviesResponse>> by lazy {
         refreshPopularMovies()
         popularMoviesRelay
     }

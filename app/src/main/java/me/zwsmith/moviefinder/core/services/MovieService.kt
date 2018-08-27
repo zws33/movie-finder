@@ -20,6 +20,7 @@ interface MovieService {
 
 data class PopularMoviesResponse(
         val page: Int,
+        @SerializedName("results")
         val popularMovies: List<PopularMovie>,
         @SerializedName("total_results")
         val totalResults: Int,

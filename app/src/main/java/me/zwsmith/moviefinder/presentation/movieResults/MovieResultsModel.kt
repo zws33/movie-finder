@@ -2,7 +2,7 @@ package me.zwsmith.moviefinder.presentation.movieResults
 
 import io.reactivex.Completable
 import io.reactivex.Observable
-import me.zwsmith.moviefinder.core.common.Result
+import me.zwsmith.moviefinder.core.common.ResponseStatus
 import me.zwsmith.moviefinder.core.extensions.just
 import me.zwsmith.moviefinder.core.services.PopularMoviesResponse
 
@@ -28,7 +28,7 @@ data class Movie(
 fun buildMovieResultsStateStream(
         intentStream: Observable<MovieResultsIntent>,
         refreshPopularMovies: Completable,
-        movieResultsStream: Observable<Result<PopularMoviesResponse>>
+        movieResultsStream: Observable<ResponseStatus<PopularMoviesResponse>>
 ): Observable<MovieResultsState> {
 
     val initialStateStream: Observable<MovieResultsState> = getInitialStateStream(movieResultsStream)
@@ -54,7 +54,7 @@ fun buildMovieResultsStateStream(
 fun getStateReducerForIntent(
         intent: MovieResultsIntent,
         refreshPopularMovies: Completable,
-        movieResultsStream: Observable<Result<PopularMoviesResponse>>
+        movieResultsStream: Observable<ResponseStatus<PopularMoviesResponse>>
 ): Observable<StateReducer> {
     return when (intent) {
         is MovieResultsIntent.NavigateToMovieDetails -> {
@@ -67,17 +67,17 @@ fun getStateReducerForIntent(
                     .andThen(movieResultsStream)
                     .flatMap { result ->
                         when (result) {
-                            is Result.Complete -> {
+                            is ResponseStatus.Complete -> {
                                 when (result) {
-                                    is Result.Complete.Success -> {
+                                    is ResponseStatus.Complete.Success -> {
                                         { oldState: MovieResultsState -> handleSuccess(result) }
                                     }
-                                    is Result.Complete.Error -> {
+                                    is ResponseStatus.Complete.Error -> {
                                         { oldState: MovieResultsState -> MovieResultsState.Error }
                                     }
                                 }
                             }
-                            Result.Pending -> {
+                            ResponseStatus.Pending -> {
                                 { MovieResultsState.Loading }
                             }
                         }.just()
@@ -87,29 +87,29 @@ fun getStateReducerForIntent(
 }
 
 fun getInitialStateStream(
-        movieResultsStream: Observable<Result<PopularMoviesResponse>>
+        movieResultsStream: Observable<ResponseStatus<PopularMoviesResponse>>
 ): Observable<MovieResultsState> {
     return movieResultsStream.map { result ->
         when (result) {
-            is Result.Complete -> {
+            is ResponseStatus.Complete -> {
                 when (result) {
-                    is Result.Complete.Success -> {
+                    is ResponseStatus.Complete.Success -> {
                         handleSuccess(result)
                     }
-                    is Result.Complete.Error -> {
+                    is ResponseStatus.Complete.Error -> {
                         MovieResultsState.Error
                     }
                 }
             }
-            Result.Pending -> {
+            ResponseStatus.Pending -> {
                 MovieResultsState.Loading
             }
         }
     }
 }
 
-fun handleSuccess(result: Result.Complete.Success<PopularMoviesResponse>): MovieResultsState.Success {
-    val response = result.value
+fun handleSuccess(responseStatus: ResponseStatus.Complete.Success<PopularMoviesResponse>): MovieResultsState.Success {
+    val response = responseStatus.value
     val movieList = response.popularMovies.map { popularMovie ->
         Movie(
                 popularMovie.id.toString(),

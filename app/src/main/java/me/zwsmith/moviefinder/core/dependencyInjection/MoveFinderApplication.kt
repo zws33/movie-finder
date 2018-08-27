@@ -17,7 +17,9 @@ class MoveFinderApplication : Application() {
     }
 
     private fun initDagger() {
-        injector = DaggerInjector.builder().build()
+        injector = DaggerInjector.builder()
+                .appModule(AppModule(this))
+                .build()
     }
 }
 
