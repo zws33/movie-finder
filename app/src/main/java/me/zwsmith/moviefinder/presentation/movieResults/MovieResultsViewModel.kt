@@ -40,7 +40,7 @@ class MovieResultsViewModel @Inject constructor() : ViewModel() {
                     "Movie Title $i",
                     "Action, Adventure",
                     imageUrl,
-                    MovieResultsIntent.GetMovieDetails("1")
+                    MovieResultsIntent.NavigateToMovieDetails("1")
             )
             list.add(movieListItemViewState)
         }

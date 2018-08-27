@@ -41,8 +41,8 @@ fun <T, U> Result<T>.flatMapResult(mapFunc: (T) -> Result<U>): Result<U> = when 
     Result.Pending -> Result.Pending
 }
 
-fun <T> Observable<T>.wrapInResultV2(): Observable<Result<T>> =
+fun <T> Observable<T>.wrapInResult(): Observable<Result<T>> =
         this.map { it.toSuccess() }.onErrorReturn { it.toError() }
 
-fun <T> Single<T>.wrapInResultV2(): Single<Result<T>> =
+fun <T> Single<T>.wrapInResult(): Single<Result<T>> =
         this.map { it.toSuccess() }.onErrorReturn { it.toError() }
