@@ -57,11 +57,6 @@ fun getStateReducerForIntent(
         movieResultsStream: Observable<ResponseStatus<PopularMoviesResponse>>
 ): Observable<StateReducer> {
     return when (intent) {
-        is MovieResultsIntent.NavigateToMovieDetails -> {
-            { oldState: MovieResultsState ->
-                MovieResultsState.NavigateToMovieDetails(intent.id)
-            }.just()
-        }
         MovieResultsIntent.RefreshPopularMovies -> {
             refreshPopularMovies
                     .andThen(movieResultsStream)
@@ -82,6 +77,9 @@ fun getStateReducerForIntent(
                             }
                         }.just()
                     }
+        }
+        MovieResultsIntent.LoadNextPopularMoviesPage -> {
+            TODO()
         }
     }
 }

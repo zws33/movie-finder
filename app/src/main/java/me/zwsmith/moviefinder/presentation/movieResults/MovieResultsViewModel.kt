@@ -31,10 +31,6 @@ class MovieResultsViewModel @Inject constructor(
             movieResultsStream = getPopularMoviesInteractor.popularMoviesStream
     )
 
-    fun refreshData() {
-        refreshPopularMoviesInteractor.refreshPopularMovies()
-    }
-
     fun getMovieListViewStateStream(): Observable<MovieResultsViewState> {
         return stateStream.map { state ->
             when (state) {
@@ -69,12 +65,14 @@ class MovieResultsViewModel @Inject constructor(
         }
     }
 
+    fun loadNextPage() = { intentRelay.accept(MovieResultsIntent.LoadNextPopularMoviesPage) }
+
     private fun Movie.toResultItemViewState(): MovieResultsItemViewState {
         return MovieResultsItemViewState(
+                id,
                 title,
                 genres.joinToString(", "),
-                posterPath?.let { IMAGE_BASE_URL + it },
-                MovieResultsIntent.NavigateToMovieDetails(id)
+                posterPath?.let { IMAGE_BASE_URL + it }
         )
     }
 
@@ -92,10 +90,10 @@ data class MovieResultsViewState(
 )
 
 data class MovieResultsItemViewState(
+        val id: String,
         val title: String,
         val genres: String,
-        val imageUrl: String?,
-        val intent: MovieResultsIntent
+        val imageUrl: String?
 )
 
 
