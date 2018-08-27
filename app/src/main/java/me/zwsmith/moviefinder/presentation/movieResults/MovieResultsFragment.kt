@@ -14,6 +14,7 @@ import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.fragment_movie_results.view.*
 import me.zwsmith.moviefinder.R
 import me.zwsmith.moviefinder.presentation.extensions.isVisible
+import javax.inject.Inject
 
 class MovieResultsFragment : Fragment() {
 
@@ -22,6 +23,9 @@ class MovieResultsFragment : Fragment() {
 
     private lateinit var viewModel: MovieResultsViewModel
     private var compositeDisposable = CompositeDisposable()
+
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +48,6 @@ class MovieResultsFragment : Fragment() {
             adapter = movieListAdapter
         }
     }
-
 
     override fun onStart() {
         super.onStart()

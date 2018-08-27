@@ -1,11 +1,37 @@
 package me.zwsmith.moviefinder.presentation.movieResults
 
 import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModelProvider
+import com.jakewharton.rxrelay2.PublishRelay
+import dagger.Binds
+import dagger.MapKey
+import dagger.Module
+import dagger.multibindings.IntoMap
 import io.reactivex.Observable
+import io.reactivex.rxkotlin.toCompletable
 import me.zwsmith.moviefinder.core.extensions.emitAtInterval
+import me.zwsmith.moviefinder.core.interactors.GetPopularMoviesInteractor
+import me.zwsmith.moviefinder.core.interactors.RefreshPopularMoviesInteractor
 import javax.inject.Inject
+import javax.inject.Provider
+import javax.inject.Singleton
+import kotlin.reflect.KClass
 
-class MovieResultsViewModel @Inject constructor() : ViewModel() {
+
+class MovieResultsViewModel @Inject constructor(
+        refreshPopularMoviesInteractor: RefreshPopularMoviesInteractor,
+        getPopularMoviesInteractor: GetPopularMoviesInteractor
+) : ViewModel() {
+
+    val intentRelay = PublishRelay.create<MovieResultsIntent>()
+
+    val stateStream = buildMovieResultsStateStream(
+            intentStream = intentRelay,
+            refreshPopularMovies =
+            { refreshPopularMoviesInteractor.refreshPopularMovies() }.toCompletable(),
+            movieResultsStream = getPopularMoviesInteractor.popularMoviesStream
+    )
+
 
     fun getMovieListViewStateStream(): Observable<MovieResultsViewState> {
         val success = MovieResultsViewState(
@@ -66,3 +92,31 @@ data class MovieResultsItemViewState(
         val imageUrl: String,
         val intent: MovieResultsIntent
 )
+
+
+@Suppress("UNCHECKED_CAST")
+@Singleton
+class ViewModelFactory @Inject constructor(
+        private val viewModels: MutableMap<Class<out ViewModel>, Provider<ViewModel>>
+) : ViewModelProvider.Factory {
+
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = viewModels[modelClass]?.get() as T
+}
+
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
+@kotlin.annotation.Retention(AnnotationRetention.RUNTIME)
+@MapKey
+internal annotation class ViewModelKey(val value: KClass<out ViewModel>)
+
+@Module
+abstract class ViewModelModule {
+
+    @Binds
+    internal abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(MovieResultsViewModel::class)
+    internal abstract fun movieResultsViewModel(viewModel: MovieResultsViewModel): ViewModel
+
+}

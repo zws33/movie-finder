@@ -1,16 +1,28 @@
 package me.zwsmith.moviefinder.core.dependencyInjection
 
 import android.app.Application
+import dagger.Component
+import me.zwsmith.moviefinder.presentation.movieResults.MovieResultsFragment
+import me.zwsmith.moviefinder.presentation.movieResults.ViewModelModule
+import javax.inject.Singleton
 
 class MoveFinderApplication : Application() {
-    val appComponent: AppComponent by lazy {
-        DaggerAppComponent.builder()
-                .appModule(AppModule(this))
-                .build()
-    }
+
+    lateinit var injector: Injector private set
 
     override fun onCreate() {
         super.onCreate()
-        appComponent.inject(this)
+        initDagger()
+
     }
+
+    private fun initDagger() {
+        injector = DaggerInjector.builder().build()
+    }
+}
+
+@Singleton
+@Component(modules = [AppModule::class, ViewModelModule::class, ServiceModule::class])
+interface Injector {
+    fun inject(fragment: MovieResultsFragment)
 }
