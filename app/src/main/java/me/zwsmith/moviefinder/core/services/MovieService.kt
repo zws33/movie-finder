@@ -20,14 +20,14 @@ interface MovieService {
 
 data class PopularMoviesResponse(
         val page: Int,
-        val results: List<Result>,
+        val popularMovies: List<PopularMovie>,
         @SerializedName("total_results")
         val totalResults: Int,
         @SerializedName("total_pages")
         val totalPages: Int
 )
 
-data class Result(
+data class PopularMovie(
         @SerializedName("poster_path")
         val posterPath: String?,
         val adult: Boolean,

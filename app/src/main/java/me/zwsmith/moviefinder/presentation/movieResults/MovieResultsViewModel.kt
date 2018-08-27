@@ -40,7 +40,7 @@ class MovieResultsViewModel @Inject constructor() : ViewModel() {
                     "Movie Title $i",
                     "Action, Adventure",
                     imageUrl,
-                    MovieResultIntent.GetMovieDetails("1")
+                    MovieResultsIntent.GetMovieDetails("1")
             )
             list.add(movieListItemViewState)
         }
@@ -64,9 +64,5 @@ data class MovieResultsItemViewState(
         val title: String,
         val genres: String,
         val imageUrl: String,
-        val intent: MovieResultIntent
+        val intent: MovieResultsIntent
 )
-
-sealed class MovieResultIntent {
-    data class GetMovieDetails(val id: String) : MovieResultIntent()
-}
