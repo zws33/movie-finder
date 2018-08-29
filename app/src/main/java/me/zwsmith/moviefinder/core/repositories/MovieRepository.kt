@@ -13,9 +13,24 @@ import me.zwsmith.moviefinder.core.services.PopularMoviesResponse
 import javax.inject.Inject
 
 class MovieRepository @Inject constructor(private val movieService: MovieService) {
+
+    private val popularMoviesRelay = PublishRelay.create<ResponseStatus<PopularMoviesResponse>>()
+
+    private var currentPopularPage = INITIAL_POPULAR_MOVIES_PAGE
+
+    val popularMoviesStream: Observable<ResponseStatus<PopularMoviesResponse>> by lazy {
+        refreshPopularMovies()
+        popularMoviesRelay
+    }
+
     fun refreshPopularMovies() {
+        getPopularMovies(INITIAL_POPULAR_MOVIES_PAGE)
+    }
+
+    private fun getPopularMovies(pageNumber: Int = 1) {
+        currentPopularPage = pageNumber
         movieService
-                .getPopularMovies()
+                .getPopularMovies(pageNumber)
                 .wrapResponse()
                 .subscribeBy(
                         onSuccess = { popularMoviesResult ->
@@ -28,11 +43,8 @@ class MovieRepository @Inject constructor(private val movieService: MovieService
                 )
     }
 
-    private val popularMoviesRelay = PublishRelay.create<ResponseStatus<PopularMoviesResponse>>()
-
-    val popularMoviesStream: Observable<ResponseStatus<PopularMoviesResponse>> by lazy {
-        refreshPopularMovies()
-        popularMoviesRelay
+    fun loadNextPopularMoviesPage() {
+        getPopularMovies(currentPopularPage++)
     }
 
     fun getMovieDetailsById(id: String): Single<MovieDetailsResponse> {
@@ -41,5 +53,6 @@ class MovieRepository @Inject constructor(private val movieService: MovieService
 
     companion object {
         private val TAG = MovieRepository::class.java.simpleName
+        private const val INITIAL_POPULAR_MOVIES_PAGE = 1
     }
 }

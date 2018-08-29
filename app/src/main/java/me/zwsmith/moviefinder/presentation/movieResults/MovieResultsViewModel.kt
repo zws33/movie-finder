@@ -9,8 +9,9 @@ import dagger.Module
 import dagger.multibindings.IntoMap
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.toCompletable
-import me.zwsmith.moviefinder.core.interactors.GetPopularMoviesInteractor
+import me.zwsmith.moviefinder.core.interactors.GetPopularMoviesStreamInteractor
 import me.zwsmith.moviefinder.core.interactors.RefreshPopularMoviesInteractor
+import me.zwsmith.moviefinder.core.interactors.RequestNextPopularMoviesPageInteractor
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton
@@ -19,7 +20,8 @@ import kotlin.reflect.KClass
 
 class MovieResultsViewModel @Inject constructor(
         private val refreshPopularMoviesInteractor: RefreshPopularMoviesInteractor,
-        getPopularMoviesInteractor: GetPopularMoviesInteractor
+        getPopularMoviesStreamInteractor: GetPopularMoviesStreamInteractor,
+        private val requestNextPopularMoviesPageInteractor: RequestNextPopularMoviesPageInteractor
 ) : ViewModel() {
 
     val intentRelay = PublishRelay.create<MovieResultsIntent>()
@@ -28,7 +30,9 @@ class MovieResultsViewModel @Inject constructor(
             intentStream = intentRelay,
             refreshPopularMovies =
             { refreshPopularMoviesInteractor.refreshPopularMovies() }.toCompletable(),
-            movieResultsStream = getPopularMoviesInteractor.popularMoviesStream
+            loadNextPopularMoviesPage =
+            { requestNextPopularMoviesPageInteractor.requestNextPage() }.toCompletable(),
+            movieResultsStream = getPopularMoviesStreamInteractor.popularMoviesStream
     )
 
     fun getMovieListViewStateStream(): Observable<MovieResultsViewState> {
@@ -65,7 +69,9 @@ class MovieResultsViewModel @Inject constructor(
         }
     }
 
-    fun loadNextPage() = { intentRelay.accept(MovieResultsIntent.LoadNextPopularMoviesPage) }
+    fun loadNextPage() {
+        intentRelay.accept(MovieResultsIntent.LoadNextPopularMoviesPage)
+    }
 
     private fun Movie.toResultItemViewState(): MovieResultsItemViewState {
         return MovieResultsItemViewState(

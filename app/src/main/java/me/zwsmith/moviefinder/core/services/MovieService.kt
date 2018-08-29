@@ -4,11 +4,12 @@ import com.google.gson.annotations.SerializedName
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface MovieService {
 
-    @GET("discover/movie?language=en-US&sort_by=popularity.desc&page=1")
-    fun getPopularMovies(): Single<PopularMoviesResponse>
+    @GET("discover/movie?language=en-US&sort_by=popularity.desc")
+    fun getPopularMovies(@Query("page") pageNumber: Int): Single<PopularMoviesResponse>
 
     @GET("movie/{id}")
     fun getMovieDetailsById(@Path("id") id: String): Single<MovieDetailsResponse>
