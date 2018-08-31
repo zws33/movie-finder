@@ -25,13 +25,14 @@ class MovieResultsAdapter(
         holder.bindViewState(movieResultsViewStates[position])
     }
 
-    class MovieHolder(v: View) : RecyclerView.ViewHolder(v), View.OnClickListener {
+    class MovieHolder(
+            private var view: View
+    ) : RecyclerView.ViewHolder(view), View.OnClickListener {
 
-        private var view: View = v
         private var viewState: MovieResultsItemViewState? = null
 
         init {
-            v.setOnClickListener(this)
+            view.setOnClickListener(this)
         }
 
         override fun onClick(v: View?) {

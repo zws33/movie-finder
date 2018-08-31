@@ -2,16 +2,17 @@ package me.zwsmith.moviefinder.presentation.movieResults
 
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
-import com.jakewharton.rxrelay2.PublishRelay
+import android.util.Log
 import dagger.Binds
 import dagger.MapKey
 import dagger.Module
 import dagger.multibindings.IntoMap
 import io.reactivex.Observable
-import io.reactivex.rxkotlin.toCompletable
+import me.zwsmith.moviefinder.core.common.ResponseStatus
 import me.zwsmith.moviefinder.core.interactors.GetPopularMoviesStreamInteractor
 import me.zwsmith.moviefinder.core.interactors.RefreshPopularMoviesInteractor
 import me.zwsmith.moviefinder.core.interactors.RequestNextPopularMoviesPageInteractor
+import me.zwsmith.moviefinder.core.services.PopularMoviesResponse
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton
@@ -20,57 +21,68 @@ import kotlin.reflect.KClass
 
 class MovieResultsViewModel @Inject constructor(
         private val refreshPopularMoviesInteractor: RefreshPopularMoviesInteractor,
-        getPopularMoviesStreamInteractor: GetPopularMoviesStreamInteractor,
+        private val getPopularMoviesStreamInteractor: GetPopularMoviesStreamInteractor,
         private val requestNextPopularMoviesPageInteractor: RequestNextPopularMoviesPageInteractor
 ) : ViewModel() {
 
-    val intentRelay = PublishRelay.create<MovieResultsIntent>()
+    val movieListViewStateStream: Observable<MovieResultsViewState> =
+            getPopularMoviesStreamInteractor.popularMoviesStream
+                    .map { responseStatus -> responseStatus.toMovieResultsState() }
+                    .map { state -> state.toMovieResultsViewState() }
+                    .doOnNext { Log.d(TAG, it.toString()) }
 
-    private val stateStream = buildMovieResultsStateStream(
-            intentStream = intentRelay,
-            refreshPopularMovies =
-            { refreshPopularMoviesInteractor.refreshPopularMovies() }.toCompletable(),
-            loadNextPopularMoviesPage =
-            { requestNextPopularMoviesPageInteractor.requestNextPage() }.toCompletable(),
-            movieResultsStream = getPopularMoviesStreamInteractor.popularMoviesStream
-    )
+    fun loadNextPage() {
+        requestNextPopularMoviesPageInteractor.requestNextPage()
+    }
 
-    fun getMovieListViewStateStream(): Observable<MovieResultsViewState> {
-        return stateStream.map { state ->
-            when (state) {
-                is MovieResultsState.Success -> {
-                    MovieResultsViewState(
-                            isLoadingVisible = false,
-                            isErrorVisible = false,
-                            retryIntent = null,
-                            movieResults = state.movieResults.map { movie ->
-                                movie.toResultItemViewState()
-                            }
-                    )
+    private fun ResponseStatus<PopularMoviesResponse>.toMovieResultsState(): MovieResultsState {
+        return when (this) {
+            is ResponseStatus.Complete -> {
+                when (this) {
+                    is ResponseStatus.Complete.Success -> {
+                        handleSuccess(this)
+                    }
+                    is ResponseStatus.Complete.Error -> {
+                        MovieResultsState.Error
+                    }
                 }
-                MovieResultsState.Loading -> {
-                    MovieResultsViewState(
-                            isLoadingVisible = true,
-                            isErrorVisible = false,
-                            retryIntent = null,
-                            movieResults = null
-                    )
-                }
-                MovieResultsState.Error -> {
-                    MovieResultsViewState(
-                            isLoadingVisible = true,
-                            isErrorVisible = true,
-                            retryIntent = MovieResultsIntent.RefreshPopularMovies,
-                            movieResults = null
-                    )
-                }
-                is MovieResultsState.NavigateToMovieDetails -> TODO()
+            }
+            ResponseStatus.Pending -> {
+                MovieResultsState.Loading
             }
         }
     }
 
-    fun loadNextPage() {
-        intentRelay.accept(MovieResultsIntent.LoadNextPopularMoviesPage)
+    private fun MovieResultsState.toMovieResultsViewState(): MovieResultsViewState {
+        return when (this) {
+            is MovieResultsState.Success -> {
+                MovieResultsViewState(
+                        isLoadingVisible = false,
+                        isErrorVisible = false,
+                        retryIntent = null,
+                        movieResults = movieResults.map { movie ->
+                            movie.toResultItemViewState()
+                        }
+                )
+            }
+            MovieResultsState.Loading -> {
+                MovieResultsViewState(
+                        isLoadingVisible = true,
+                        isErrorVisible = false,
+                        retryIntent = null,
+                        movieResults = null
+                )
+            }
+            MovieResultsState.Error -> {
+                MovieResultsViewState(
+                        isLoadingVisible = true,
+                        isErrorVisible = true,
+                        retryIntent = MovieResultsIntent.RefreshPopularMovies,
+                        movieResults = null
+                )
+            }
+            is MovieResultsState.NavigateToMovieDetails -> TODO()
+        }
     }
 
     private fun Movie.toResultItemViewState(): MovieResultsItemViewState {

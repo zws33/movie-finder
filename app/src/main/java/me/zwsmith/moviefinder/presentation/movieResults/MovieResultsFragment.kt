@@ -14,6 +14,7 @@ import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.fragment_movie_results.view.*
 import me.zwsmith.moviefinder.R
 import me.zwsmith.moviefinder.core.dependencyInjection.MoveFinderApplication
+import me.zwsmith.moviefinder.presentation.common.EndlessRecyclerOnScrollListener
 import me.zwsmith.moviefinder.presentation.extensions.isVisible
 import javax.inject.Inject
 
@@ -48,14 +49,14 @@ class MovieResultsFragment : Fragment() {
             val linearLayoutManager = LinearLayoutManager(context)
             layoutManager = linearLayoutManager
             adapter = movieListAdapter
+            addOnScrollListener(onScrollListener)
         }
     }
 
     override fun onStart() {
         super.onStart()
-        val movieListViewStateStream = viewModel.getMovieListViewStateStream()
         compositeDisposable.add(
-                movieListViewStateStream
+                viewModel.movieListViewStateStream
                         .doOnNext {
                             Log.d(TAG, it.toString())
                         }
@@ -80,6 +81,12 @@ class MovieResultsFragment : Fragment() {
         viewState.movieResults?.let {
             movieListViewState.addAll(ArrayList(it))
             movieListAdapter.notifyDataSetChanged()
+        }
+    }
+
+    private val onScrollListener = object : EndlessRecyclerOnScrollListener() {
+        override fun requestData() {
+            viewModel.loadNextPage()
         }
     }
 
