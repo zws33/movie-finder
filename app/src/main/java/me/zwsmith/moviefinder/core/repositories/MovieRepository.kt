@@ -16,9 +16,7 @@ class MovieRepository @Inject constructor(private val movieService: MovieService
 
     private val popularMoviesRelay = BehaviorRelay.create<ResponseStatus<PopularMoviesResponse>>()
 
-    val popularMoviesStream: Observable<ResponseStatus<PopularMoviesResponse>> =
-            popularMoviesRelay.share()
-
+    val popularMoviesStream: Observable<ResponseStatus<PopularMoviesResponse>> = popularMoviesRelay
 
     private var currentPopularPage = INITIAL_POPULAR_MOVIES_PAGE
 
