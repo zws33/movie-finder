@@ -47,8 +47,8 @@ class MovieRepository @Inject constructor(private val movieService: MovieService
         getPopularMovies(currentPopularPage++)
     }
 
-    fun getMovieDetailsById(id: String): Single<MovieDetailsResponse> {
-        return movieService.getMovieDetailsById(id)
+    fun getMovieDetailsById(id: String): Single<ResponseStatus<MovieDetailsResponse>> {
+        return movieService.getMovieDetailsById(id).wrapResponse()
     }
 
     companion object {

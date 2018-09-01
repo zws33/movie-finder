@@ -35,7 +35,7 @@ class RequestNextPopularMoviesPageInteractor @Inject constructor(
 
 @Singleton
 class GetMovieDetailsInteractor @Inject constructor(private val movieRepository: MovieRepository) {
-    fun getMovieDetailsById(movieId: String): Single<MovieDetailsResponse> {
+    fun getMovieDetailsById(movieId: String): Single<ResponseStatus<MovieDetailsResponse>> {
         return movieRepository.getMovieDetailsById(movieId)
     }
 }
