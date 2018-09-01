@@ -2,6 +2,7 @@ package me.zwsmith.moviefinder.core.dependencyInjection
 
 import android.app.Application
 import dagger.Component
+import me.zwsmith.moviefinder.presentation.movieDetails.MovieDetailsFragment
 import me.zwsmith.moviefinder.presentation.movieResults.MovieResultsFragment
 import javax.inject.Singleton
 
@@ -26,4 +27,5 @@ class MoveFinderApplication : Application() {
 @Component(modules = [AppModule::class, ViewModelModule::class, ServiceModule::class])
 interface Injector {
     fun inject(fragment: MovieResultsFragment)
+    fun inject(fragment: MovieDetailsFragment)
 }

@@ -1,14 +1,18 @@
 package me.zwsmith.moviefinder.core.interactors
 
 import io.reactivex.Observable
+import io.reactivex.Single
 import me.zwsmith.moviefinder.core.common.ResponseStatus
 import me.zwsmith.moviefinder.core.repositories.MovieRepository
+import me.zwsmith.moviefinder.core.services.MovieDetailsResponse
 import me.zwsmith.moviefinder.core.services.PopularMoviesResponse
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class GetPopularMoviesStreamInteractor @Inject constructor(private val movieRepository: MovieRepository) {
+class GetPopularMoviesStreamInteractor @Inject constructor(
+        private val movieRepository: MovieRepository
+) {
     val popularMoviesStream: Observable<ResponseStatus<PopularMoviesResponse>> =
             movieRepository.popularMoviesStream
 }
@@ -26,5 +30,12 @@ class RequestNextPopularMoviesPageInteractor @Inject constructor(
 ) {
     fun requestNextPage() {
         movieRepository.loadNextPopularMoviesPage()
+    }
+}
+
+@Singleton
+class GetMovieDetailsInteractor @Inject constructor(private val movieRepository: MovieRepository) {
+    fun getMovieDetailsById(movieId: String): Single<MovieDetailsResponse> {
+        return movieRepository.getMovieDetailsById(movieId)
     }
 }

@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModelProvider
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
+import me.zwsmith.moviefinder.presentation.movieDetails.MovieDetailsViewModel
 import me.zwsmith.moviefinder.presentation.movieResults.MovieResultsViewModel
 
 @Module
@@ -18,4 +19,8 @@ abstract class ViewModelModule {
     @ViewModelKey(MovieResultsViewModel::class)
     internal abstract fun movieResultsViewModel(viewModel: MovieResultsViewModel): ViewModel
 
+    @Binds
+    @IntoMap
+    @ViewModelKey(MovieDetailsViewModel::class)
+    internal abstract fun movieDetailsViewModel(viewModel: MovieDetailsViewModel): ViewModel
 }
