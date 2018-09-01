@@ -5,4 +5,5 @@
     <string name="communication_error">Communication Error</string>
     <string name="retry">Retry</string>
     <string name="error_icon">Error Icon</string>
+    <string name="movie_poster">Movie Poster</string>
 </resources>

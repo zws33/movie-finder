@@ -46,7 +46,7 @@ class MovieResultsAdapter(
                     .into(view.poster_icon)
 
             view.title_tv.text = viewState.title
-            view.genres_tv.text = viewState.popularity
+            view.popularity_tv.text = viewState.popularity
         }
     }
 }
