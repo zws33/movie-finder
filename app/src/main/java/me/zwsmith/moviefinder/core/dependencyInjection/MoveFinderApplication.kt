@@ -3,7 +3,6 @@ package me.zwsmith.moviefinder.core.dependencyInjection
 import android.app.Application
 import dagger.Component
 import me.zwsmith.moviefinder.presentation.movieResults.MovieResultsFragment
-import me.zwsmith.moviefinder.presentation.movieResults.ViewModelModule
 import javax.inject.Singleton
 
 class MoveFinderApplication : Application() {

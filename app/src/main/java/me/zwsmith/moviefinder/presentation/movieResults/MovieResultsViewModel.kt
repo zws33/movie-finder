@@ -1,26 +1,16 @@
 package me.zwsmith.moviefinder.presentation.movieResults
 
 import android.arch.lifecycle.ViewModel
-import android.arch.lifecycle.ViewModelProvider
 import android.util.Log
-import dagger.Binds
-import dagger.MapKey
-import dagger.Module
-import dagger.multibindings.IntoMap
 import io.reactivex.Observable
 import me.zwsmith.moviefinder.core.common.ResponseStatus
 import me.zwsmith.moviefinder.core.interactors.GetPopularMoviesStreamInteractor
-import me.zwsmith.moviefinder.core.interactors.RefreshPopularMoviesInteractor
 import me.zwsmith.moviefinder.core.interactors.RequestNextPopularMoviesPageInteractor
 import me.zwsmith.moviefinder.core.services.PopularMoviesResponse
 import javax.inject.Inject
-import javax.inject.Provider
-import javax.inject.Singleton
-import kotlin.reflect.KClass
 
 
 class MovieResultsViewModel @Inject constructor(
-        private val refreshPopularMoviesInteractor: RefreshPopularMoviesInteractor,
         private val getPopularMoviesStreamInteractor: GetPopularMoviesStreamInteractor,
         private val requestNextPopularMoviesPageInteractor: RequestNextPopularMoviesPageInteractor
 ) : ViewModel() {
@@ -59,17 +49,13 @@ class MovieResultsViewModel @Inject constructor(
                 MovieResultsViewState(
                         isLoadingVisible = false,
                         isErrorVisible = false,
-                        retryIntent = null,
-                        movieResults = movieResults.map { movie ->
-                            movie.toResultItemViewState()
-                        }
+                        movieResults = movieResults.map { movie -> movie.toMovieItemViewState() }
                 )
             }
             MovieResultsState.Loading -> {
                 MovieResultsViewState(
                         isLoadingVisible = true,
                         isErrorVisible = false,
-                        retryIntent = null,
                         movieResults = null
                 )
             }
@@ -77,16 +63,14 @@ class MovieResultsViewModel @Inject constructor(
                 MovieResultsViewState(
                         isLoadingVisible = true,
                         isErrorVisible = true,
-                        retryIntent = MovieResultsIntent.RefreshPopularMovies,
                         movieResults = null
                 )
             }
-            is MovieResultsState.NavigateToMovieDetails -> TODO()
         }
     }
 
-    private fun Movie.toResultItemViewState(): MovieResultsItemViewState {
-        return MovieResultsItemViewState(
+    private fun Movie.toMovieItemViewState(): MovieItemViewState {
+        return MovieItemViewState(
                 id,
                 title,
                 genres.joinToString(", "),
@@ -103,45 +87,12 @@ class MovieResultsViewModel @Inject constructor(
 data class MovieResultsViewState(
         val isLoadingVisible: Boolean,
         val isErrorVisible: Boolean,
-        val retryIntent: MovieResultsIntent.RefreshPopularMovies?,
-        val movieResults: List<MovieResultsItemViewState>?
+        val movieResults: List<MovieItemViewState>?
 )
 
-data class MovieResultsItemViewState(
+data class MovieItemViewState(
         val id: String,
         val title: String,
         val genres: String,
         val imageUrl: String?
 )
-
-
-@Suppress("UNCHECKED_CAST")
-@Singleton
-class ViewModelFactory @Inject constructor(
-        private val viewModels: MutableMap<Class<out ViewModel>, Provider<ViewModel>>
-) : ViewModelProvider.Factory {
-
-    override fun <T : ViewModel> create(modelClass: Class<T>): T = viewModels[modelClass]?.get() as T
-}
-
-@Target(
-        AnnotationTarget.FUNCTION,
-        AnnotationTarget.PROPERTY_GETTER,
-        AnnotationTarget.PROPERTY_SETTER
-)
-@kotlin.annotation.Retention(AnnotationRetention.RUNTIME)
-@MapKey
-internal annotation class ViewModelKey(val value: KClass<out ViewModel>)
-
-@Module
-abstract class ViewModelModule {
-
-    @Binds
-    internal abstract fun bindViewModelFactory(factory: ViewModelFactory): ViewModelProvider.Factory
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(MovieResultsViewModel::class)
-    internal abstract fun movieResultsViewModel(viewModel: MovieResultsViewModel): ViewModel
-
-}

@@ -11,7 +11,7 @@ import me.zwsmith.moviefinder.R
 import me.zwsmith.moviefinder.presentation.extensions.inflate
 
 class MovieResultsAdapter(
-        private val movieResultsViewStates: ArrayList<MovieResultsItemViewState>
+        private val movieItemViewStates: ArrayList<MovieItemViewState>
 ) : RecyclerView.Adapter<MovieResultsAdapter.MovieHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieHolder {
@@ -19,10 +19,10 @@ class MovieResultsAdapter(
         return MovieHolder(view)
     }
 
-    override fun getItemCount(): Int = movieResultsViewStates.size
+    override fun getItemCount(): Int = movieItemViewStates.size
 
     override fun onBindViewHolder(holder: MovieHolder, position: Int) {
-        holder.bindViewState(movieResultsViewStates[position])
+        holder.bindViewState(movieItemViewStates[position])
     }
 
     class MovieHolder(
@@ -39,7 +39,7 @@ class MovieResultsAdapter(
             Toast.makeText(view.context, "Movie ID: $id", Toast.LENGTH_SHORT).show()
         }
 
-        fun bindViewState(viewState: MovieResultsItemViewState) {
+        fun bindViewState(viewState: MovieItemViewState) {
             Picasso.get()
                     .load(viewState.imageUrl)
                     .into(view.poster_icon)

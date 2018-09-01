@@ -14,13 +14,14 @@ import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.fragment_movie_results.view.*
 import me.zwsmith.moviefinder.R
 import me.zwsmith.moviefinder.core.dependencyInjection.MoveFinderApplication
+import me.zwsmith.moviefinder.core.dependencyInjection.ViewModelFactory
 import me.zwsmith.moviefinder.presentation.common.EndlessRecyclerOnScrollListener
 import me.zwsmith.moviefinder.presentation.extensions.isVisible
 import javax.inject.Inject
 
 class MovieResultsFragment : Fragment() {
 
-    private val movieListViewState = arrayListOf<MovieResultsItemViewState>()
+    private val movieListViewState = arrayListOf<MovieItemViewState>()
     private val movieListAdapter = MovieResultsAdapter(movieListViewState)
 
     private lateinit var viewModel: MovieResultsViewModel
