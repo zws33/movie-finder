@@ -4,19 +4,19 @@ package me.zwsmith.moviefinder.presentation.movieResults
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.movie_results_item.view.*
 import me.zwsmith.moviefinder.R
 import me.zwsmith.moviefinder.presentation.extensions.inflate
 
 class MovieResultsAdapter(
-        private val movieItemViewStates: ArrayList<MovieItemViewState>
+        private val movieItemViewStates: List<MovieItemViewState>,
+        private val itemOnClick: (String) -> Unit
 ) : RecyclerView.Adapter<MovieResultsAdapter.MovieHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieHolder {
         val view = parent.inflate(R.layout.movie_results_item)
-        return MovieHolder(view)
+        return MovieHolder(view, itemOnClick)
     }
 
     override fun getItemCount(): Int = movieItemViewStates.size
@@ -26,26 +26,27 @@ class MovieResultsAdapter(
     }
 
     class MovieHolder(
-            private var view: View
-    ) : RecyclerView.ViewHolder(view), View.OnClickListener {
+            private val view: View,
+            private val onClick: (String) -> Unit
+    ) : RecyclerView.ViewHolder(view) {
 
         private var id: String? = null
 
         init {
-            view.setOnClickListener(this)
-        }
-
-        override fun onClick(v: View?) {
-            Toast.makeText(view.context, "Movie ID: $id", Toast.LENGTH_SHORT).show()
+            view.setOnClickListener { _ ->
+                id?.let { onClick(it) }
+            }
         }
 
         fun bindViewState(viewState: MovieItemViewState) {
+            id = viewState.id
+
             Picasso.get()
                     .load(viewState.imageUrl)
                     .into(view.poster_icon)
 
             view.title_tv.text = viewState.title
-            view.genres_tv.text = viewState.genres
+            view.genres_tv.text = viewState.popularity
         }
     }
 }

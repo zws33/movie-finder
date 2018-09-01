@@ -5,12 +5,14 @@ import android.util.Log
 import io.reactivex.Observable
 import me.zwsmith.moviefinder.core.common.ResponseStatus
 import me.zwsmith.moviefinder.core.interactors.GetPopularMoviesStreamInteractor
+import me.zwsmith.moviefinder.core.interactors.RefreshPopularMoviesInteractor
 import me.zwsmith.moviefinder.core.interactors.RequestNextPopularMoviesPageInteractor
 import me.zwsmith.moviefinder.core.services.PopularMoviesResponse
 import javax.inject.Inject
 
 
 class MovieResultsViewModel @Inject constructor(
+        private val refreshPopularMoviesInteractor: RefreshPopularMoviesInteractor,
         private val getPopularMoviesStreamInteractor: GetPopularMoviesStreamInteractor,
         private val requestNextPopularMoviesPageInteractor: RequestNextPopularMoviesPageInteractor
 ) : ViewModel() {
@@ -20,10 +22,14 @@ class MovieResultsViewModel @Inject constructor(
                     .map { responseStatus -> responseStatus.toMovieResultsState() }
                     .map { state -> state.toMovieResultsViewState() }
                     .doOnNext { Log.d(TAG, it.toString()) }
-                    .doOnSubscribe { loadNextPage() }
+                    .doOnSubscribe { refreshPopularMovies() }
 
     fun loadNextPage() {
         requestNextPopularMoviesPageInteractor.requestNextPage()
+    }
+
+    private fun refreshPopularMovies() {
+        refreshPopularMoviesInteractor.refreshPopularMovies()
     }
 
     private fun ResponseStatus<PopularMoviesResponse>.toMovieResultsState(): MovieResultsState {
@@ -49,10 +55,10 @@ class MovieResultsViewModel @Inject constructor(
     ): MovieResultsState.Success {
         val response = responseStatus.value
         val movieList = response.popularMovies.map { popularMovie ->
-            Movie(
+            MovieResultItem(
                     popularMovie.id.toString(),
                     popularMovie.title,
-                    popularMovie.genreIds.map { it.toString() },
+                    popularMovie.popularity,
                     popularMovie.posterPath
             )
         }
@@ -85,11 +91,11 @@ class MovieResultsViewModel @Inject constructor(
         }
     }
 
-    private fun Movie.toMovieItemViewState(): MovieItemViewState {
+    private fun MovieResultItem.toMovieItemViewState(): MovieItemViewState {
         return MovieItemViewState(
                 id,
                 title,
-                genres.joinToString(", "),
+                popularity.toString(),
                 posterPath?.let { IMAGE_BASE_URL + it }
         )
     }
@@ -109,6 +115,6 @@ data class MovieResultsViewState(
 data class MovieItemViewState(
         val id: String,
         val title: String,
-        val genres: String,
+        val popularity: String,
         val imageUrl: String?
 )

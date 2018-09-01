@@ -1,6 +1,5 @@
 package me.zwsmith.moviefinder.presentation.movieResults
 
-import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -13,16 +12,18 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.fragment_movie_results.view.*
 import me.zwsmith.moviefinder.R
-import me.zwsmith.moviefinder.core.dependencyInjection.MoveFinderApplication
 import me.zwsmith.moviefinder.core.dependencyInjection.ViewModelFactory
 import me.zwsmith.moviefinder.presentation.common.EndlessRecyclerOnScrollListener
+import me.zwsmith.moviefinder.presentation.extensions.getInjector
+import me.zwsmith.moviefinder.presentation.extensions.getViewModel
 import me.zwsmith.moviefinder.presentation.extensions.isVisible
+import me.zwsmith.moviefinder.presentation.movieDetails.MovieDetailsFragment
 import javax.inject.Inject
 
 class MovieResultsFragment : Fragment() {
 
-    private val movieListViewState = arrayListOf<MovieItemViewState>()
-    private val movieListAdapter = MovieResultsAdapter(movieListViewState)
+    private val movieListViewState = mutableListOf<MovieItemViewState>()
+    private val movieListAdapter = MovieResultsAdapter(movieListViewState, ::navigateToDetails)
 
     private lateinit var viewModel: MovieResultsViewModel
     private var compositeDisposable = CompositeDisposable()
@@ -32,8 +33,8 @@ class MovieResultsFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        (activity!!.application as MoveFinderApplication).injector.inject(this)
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(MovieResultsViewModel::class.java)
+        getInjector().inject(this)
+        viewModel = getViewModel(viewModelFactory)
     }
 
     override fun onCreateView(
@@ -54,13 +55,19 @@ class MovieResultsFragment : Fragment() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
+    private fun navigateToDetails(movieId: String) {
+        fragmentManager
+                ?.beginTransaction()
+                ?.replace(R.id.root, MovieDetailsFragment.newInstance(movieId))
+                ?.addToBackStack(null)
+                ?.commit()
+    }
+
+    override fun onStart() {
+        super.onStart()
         compositeDisposable.add(
                 viewModel.movieListViewStateStream
-                        .doOnNext {
-                            Log.d(TAG, it.toString())
-                        }
+                        .doOnNext { Log.d(TAG, it.toString()) }
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeBy(
                                 onNext = { view?.update(it) },
@@ -69,9 +76,10 @@ class MovieResultsFragment : Fragment() {
         )
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onStop() {
+        super.onStop()
         compositeDisposable.dispose()
+        view?.movie_results_rv?.invalidate()
     }
 
     private fun View.update(viewState: MovieResultsViewState) {
@@ -79,7 +87,7 @@ class MovieResultsFragment : Fragment() {
         error_group.isVisible = viewState.isErrorVisible
         movie_results_rv.isVisible = viewState.movieResults != null
         viewState.movieResults?.let {
-            movieListViewState.addAll(ArrayList(it))
+            movieListViewState.addAll(it)
             movieListAdapter.notifyDataSetChanged()
         }
     }

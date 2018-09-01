@@ -10,13 +10,13 @@ sealed class MovieResultsState {
     }
 
     data class Success(
-            val movieResults: List<Movie>
+            val movieResults: List<MovieResultItem>
     ) : MovieResultsState()
 }
 
-data class Movie(
+data class MovieResultItem(
         val id: String,
         val title: String,
-        val genres: List<String>,
+        val popularity: Double,
         val posterPath: String?
 )

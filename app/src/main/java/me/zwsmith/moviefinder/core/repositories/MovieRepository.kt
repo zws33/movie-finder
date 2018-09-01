@@ -2,10 +2,8 @@ package me.zwsmith.moviefinder.core.repositories
 
 import android.util.Log
 import com.jakewharton.rxrelay2.BehaviorRelay
-import com.jakewharton.rxrelay2.ReplayRelay
 import io.reactivex.Observable
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
 import me.zwsmith.moviefinder.core.common.ResponseStatus
 import me.zwsmith.moviefinder.core.common.wrapResponse
@@ -24,7 +22,11 @@ class MovieRepository @Inject constructor(private val movieService: MovieService
 
     private var currentPopularPage = INITIAL_POPULAR_MOVIES_PAGE
 
-    fun refreshPopularMovies() = getPopularMovies(currentPopularPage)
+    fun refreshPopularMovies() {
+        currentPopularPage = INITIAL_POPULAR_MOVIES_PAGE
+        popularMoviesRelay.accept(ResponseStatus.Pending)
+        getPopularMovies(currentPopularPage)
+    }
 
     private fun getPopularMovies(pageNumber: Int = 1) {
         movieService
