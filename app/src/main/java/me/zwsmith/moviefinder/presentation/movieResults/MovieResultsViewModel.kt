@@ -20,6 +20,7 @@ class MovieResultsViewModel @Inject constructor(
                     .map { responseStatus -> responseStatus.toMovieResultsState() }
                     .map { state -> state.toMovieResultsViewState() }
                     .doOnNext { Log.d(TAG, it.toString()) }
+                    .doOnSubscribe { loadNextPage() }
 
     fun loadNextPage() {
         requestNextPopularMoviesPageInteractor.requestNextPage()
@@ -41,6 +42,21 @@ class MovieResultsViewModel @Inject constructor(
                 MovieResultsState.Loading
             }
         }
+    }
+
+    private fun handleSuccess(
+            responseStatus: ResponseStatus.Complete.Success<PopularMoviesResponse>
+    ): MovieResultsState.Success {
+        val response = responseStatus.value
+        val movieList = response.popularMovies.map { popularMovie ->
+            Movie(
+                    popularMovie.id.toString(),
+                    popularMovie.title,
+                    popularMovie.genreIds.map { it.toString() },
+                    popularMovie.posterPath
+            )
+        }
+        return MovieResultsState.Success(movieList)
     }
 
     private fun MovieResultsState.toMovieResultsViewState(): MovieResultsViewState {

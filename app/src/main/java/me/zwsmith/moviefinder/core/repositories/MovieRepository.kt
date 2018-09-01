@@ -1,10 +1,10 @@
 package me.zwsmith.moviefinder.core.repositories
 
 import android.util.Log
+import com.jakewharton.rxrelay2.BehaviorRelay
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.subjects.BehaviorSubject
 import me.zwsmith.moviefinder.core.common.ResponseStatus
 import me.zwsmith.moviefinder.core.common.wrapResponse
 import me.zwsmith.moviefinder.core.services.MovieDetailsResponse
@@ -14,11 +14,11 @@ import javax.inject.Inject
 
 class MovieRepository @Inject constructor(private val movieService: MovieService) {
 
-    private val popularMoviesSubject = BehaviorSubject.create<ResponseStatus<PopularMoviesResponse>>()
+    private val popularMoviesRelay = BehaviorRelay.create<ResponseStatus<PopularMoviesResponse>>()
 
-    val popularMoviesStream: Observable<ResponseStatus<PopularMoviesResponse>> by lazy {
-        popularMoviesSubject
-    }
+    val popularMoviesStream: Observable<ResponseStatus<PopularMoviesResponse>> =
+            popularMoviesRelay.share()
+
 
     private var currentPopularPage = INITIAL_POPULAR_MOVIES_PAGE
 
@@ -31,7 +31,7 @@ class MovieRepository @Inject constructor(private val movieService: MovieService
                 .subscribeBy(
                         onSuccess = { popularMoviesResult ->
                             Log.i(TAG, popularMoviesResult.toString())
-                            popularMoviesSubject.onNext(popularMoviesResult)
+                            popularMoviesRelay.accept(popularMoviesResult)
                         },
                         onError = { e: Throwable ->
                             Log.e(TAG, "Error message: ${e.message}", e)

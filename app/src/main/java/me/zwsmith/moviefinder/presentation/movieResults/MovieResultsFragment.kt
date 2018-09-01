@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.fragment_movie_results.view.*
 import me.zwsmith.moviefinder.R
 import me.zwsmith.moviefinder.core.dependencyInjection.MoveFinderApplication
@@ -54,24 +53,23 @@ class MovieResultsFragment : Fragment() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onResume() {
+        super.onResume()
         compositeDisposable.add(
                 viewModel.movieListViewStateStream
                         .doOnNext {
                             Log.d(TAG, it.toString())
                         }
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeBy(
-                                onNext = { view?.update(it) },
-                                onError = { Log.e(TAG, "Error message: ${it.message}", it) }
+                        .subscribe(
+                                { view?.update(it) },
+                                { Log.e(TAG, "Error message: ${it.message}", it) }
                         )
         )
-
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onPause() {
+        super.onPause()
         compositeDisposable.dispose()
     }
 
