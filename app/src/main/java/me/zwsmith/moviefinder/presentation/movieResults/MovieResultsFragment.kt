@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.fragment_movie_results.view.*
 import me.zwsmith.moviefinder.R
 import me.zwsmith.moviefinder.core.dependencyInjection.MoveFinderApplication
@@ -61,9 +62,9 @@ class MovieResultsFragment : Fragment() {
                             Log.d(TAG, it.toString())
                         }
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                                { view?.update(it) },
-                                { Log.e(TAG, "Error message: ${it.message}", it) }
+                        .subscribeBy(
+                                onNext = { view?.update(it) },
+                                onError = { Log.e(TAG, "Error message: ${it.message}", it) }
                         )
         )
     }
