@@ -2,9 +2,9 @@ package me.zwsmith.moviefinder.presentation.movieResults
 
 
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.movie_results_item.view.*
 import me.zwsmith.moviefinder.R
@@ -29,18 +29,17 @@ class MovieResultsAdapter(
             private var view: View
     ) : RecyclerView.ViewHolder(view), View.OnClickListener {
 
-        private var viewState: MovieResultsItemViewState? = null
+        private var id: String? = null
 
         init {
             view.setOnClickListener(this)
         }
 
         override fun onClick(v: View?) {
-            Log.d("RecyclerView", viewState?.title)
+            Toast.makeText(view.context, "Movie ID: $id", Toast.LENGTH_SHORT).show()
         }
 
         fun bindViewState(viewState: MovieResultsItemViewState) {
-            this.viewState = viewState
             Picasso.get()
                     .load(viewState.imageUrl)
                     .into(view.poster_icon)
