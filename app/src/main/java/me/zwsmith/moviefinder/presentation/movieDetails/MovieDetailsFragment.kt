@@ -6,8 +6,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.squareup.picasso.Picasso
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
+import kotlinx.android.synthetic.main.fragment_movie_details.*
 import me.zwsmith.moviefinder.R
 import me.zwsmith.moviefinder.core.dependencyInjection.ViewModelFactory
 import me.zwsmith.moviefinder.presentation.extensions.getInjector
@@ -40,15 +43,30 @@ class MovieDetailsFragment : Fragment() {
         super.onStart()
         arguments?.getString(MOVIE_ID, null)?.let {
             compositeDisposable.add(
-                    viewModel.getMovieDetailsSingle(it)
+                    viewModel.getMovieDetailsViewState(it)
+                            .observeOn(AndroidSchedulers.mainThread())
                             .subscribeBy(
-                                    onSuccess = { movieDetailsResponse ->
-                                        Log.d(TAG, movieDetailsResponse.title)
+                                    onSuccess = { movieDetailsViewState ->
+                                        update(movieDetailsViewState)
                                     },
                                     onError = { e -> Log.e(TAG, e.message, e) }
                             )
             )
         }
+                ?: Log.e(
+                        TAG,
+                        "Movie details fragment instantiated without movie id.",
+                        IllegalStateException("Movie details fragment instantiated without movie id.")
+                )
+    }
+
+    private fun update(viewState: MovieDetailsViewState) {
+        title.text = viewState.title
+        overview.text = viewState.overview
+        Picasso.get()
+                .load(viewState.backdropUrl)
+                .placeholder(R.drawable.ic_action_movie)
+                .into(backdrop)
     }
 
     companion object {
@@ -59,6 +77,6 @@ class MovieDetailsFragment : Fragment() {
             }
         }
 
-        private const val MOVIE_ID = "MOVIE_ID"
+        private const val MOVIE_ID = "movie_id"
     }
 }

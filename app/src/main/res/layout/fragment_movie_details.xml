@@ -8,27 +8,27 @@
 
     <ImageView
         android:id="@+id/backdrop"
-        android:layout_width="wrap_content"
-        android:layout_height="169dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:contentDescription="@string/movie_poster"
+        android:minHeight="169dp"
         app:layout_constraintBottom_toTopOf="@+id/title"
         app:layout_constraintEnd_toStartOf="@+id/right_margin"
         app:layout_constraintStart_toStartOf="@+id/left_margin"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.07999998"
+        app:layout_constraintVertical_bias="0.0"
         app:layout_constraintVertical_chainStyle="packed"
         app:srcCompat="@mipmap/ic_launcher"
         tools:layout_height="169dp"
-        tools:layout_width="300dp" />
+        tools:layout_width="0dp" />
 
 
-    <TextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/title"
         android:layout_width="0dp"
         android:layout_height="65dp"
         android:layout_marginTop="8dp"
-        android:textSize="48sp"
+        app:autoSizeTextType="uniform"
         app:layout_constraintBottom_toTopOf="@+id/overview"
         app:layout_constraintEnd_toStartOf="@+id/right_margin"
         app:layout_constraintHorizontal_bias="0.0"

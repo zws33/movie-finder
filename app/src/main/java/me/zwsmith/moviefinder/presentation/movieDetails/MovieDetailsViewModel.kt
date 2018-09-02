@@ -10,13 +10,48 @@ import javax.inject.Inject
 class MovieDetailsViewModel @Inject constructor(
         private val getMovieDetailsInteractor: GetMovieDetailsInteractor
 ) : ViewModel() {
-    private fun getMovieDetailsViewState(movieId: String): Single<MovieDetailsState> {
-        return getMovieDetailsSingle(movieId)
-                .map { it.toMovieDetailsState() }
 
+    fun getMovieDetailsViewState(movieId: String): Single<MovieDetailsViewState> {
+        return getMovieDetailsSingle(movieId)
+                .map { responseStatus -> responseStatus.toMovieDetailsState() }
+                .map { state -> state.toMovieDetailsViewState() }
     }
 
-    fun getMovieDetailsSingle(movieId: String): Single<ResponseStatus<MovieDetailsResponse>> {
+    private fun MovieDetailsState.toMovieDetailsViewState(): MovieDetailsViewState {
+        return when (this) {
+            is MovieDetailsState.Success -> {
+                MovieDetailsViewState(
+                        isLoadingVisible = false,
+                        isErrorVisible = false,
+                        title = movieDetails.title,
+                        overview = movieDetails.overview,
+                        backdropUrl = movieDetails.backdropPath?.let { IMAGE_BASE_URL + it }
+                )
+            }
+            MovieDetailsState.Loading -> {
+                MovieDetailsViewState(
+                        isLoadingVisible = true,
+                        isErrorVisible = false,
+                        title = null,
+                        overview = null,
+                        backdropUrl = null
+                )
+            }
+            MovieDetailsState.Error -> {
+                MovieDetailsViewState(
+                        isLoadingVisible = true,
+                        isErrorVisible = true,
+                        title = null,
+                        overview = null,
+                        backdropUrl = null
+                )
+            }
+        }
+    }
+
+    private fun getMovieDetailsSingle(
+            movieId: String
+    ): Single<ResponseStatus<MovieDetailsResponse>> {
         return getMovieDetailsInteractor.getMovieDetailsById(movieId)
     }
 
@@ -50,14 +85,19 @@ class MovieDetailsViewModel @Inject constructor(
 
         return MovieDetailsState.Success(movieDetails)
     }
+
+    companion object {
+        private val TAG = MovieDetailsViewModel::class.java.simpleName
+        private const val IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w1280"
+    }
 }
 
 data class MovieDetailsViewState(
         val isLoadingVisible: Boolean,
         val isErrorVisible: Boolean,
-        val title: String,
+        val title: String?,
         val overview: String?,
-        val backdropPath: String?
+        val backdropUrl: String?
 )
 
 sealed class MovieDetailsState {

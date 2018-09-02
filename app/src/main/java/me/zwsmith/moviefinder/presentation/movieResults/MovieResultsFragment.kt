@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
-import kotlinx.android.synthetic.main.fragment_movie_results.view.*
+import kotlinx.android.synthetic.main.fragment_movie_results.*
 import me.zwsmith.moviefinder.R
 import me.zwsmith.moviefinder.core.dependencyInjection.ViewModelFactory
 import me.zwsmith.moviefinder.presentation.common.EndlessRecyclerOnScrollListener
@@ -47,7 +47,7 @@ class MovieResultsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        with(view.movie_results_rv) {
+        with(movie_results_rv) {
             val linearLayoutManager = LinearLayoutManager(context)
             layoutManager = linearLayoutManager
             adapter = movieListAdapter
@@ -70,7 +70,7 @@ class MovieResultsFragment : Fragment() {
                         .doOnNext { Log.d(TAG, it.toString()) }
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeBy(
-                                onNext = { view?.update(it) },
+                                onNext = { update(it) },
                                 onError = { Log.e(TAG, "Error message: ${it.message}", it) }
                         )
         )
@@ -79,10 +79,10 @@ class MovieResultsFragment : Fragment() {
     override fun onStop() {
         super.onStop()
         compositeDisposable.dispose()
-        view?.movie_results_rv?.invalidate()
+        movie_results_rv?.invalidate()
     }
 
-    private fun View.update(viewState: MovieResultsViewState) {
+    private fun update(viewState: MovieResultsViewState) {
         progress.isVisible = viewState.isLoadingVisible
         error_group.isVisible = viewState.isErrorVisible
         movie_results_rv.isVisible = viewState.movieResults != null

@@ -26,25 +26,31 @@
         android:id="@+id/title_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:textSize="18sp"
         app:layout_constraintStart_toEndOf="@+id/poster_icon"
-        app:layout_constraintTop_toBottomOf="@+id/popularity_tv"
-        tools:text="TextView" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Title" />
 
     <TextView
         android:id="@+id/popularity_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/title_tv"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="TextView" />
+        app:layout_constraintTop_toBottomOf="@+id/title_tv"
+        tools:text="Popularity" />
 
     <android.support.constraint.Group
         android:id="@+id/group"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="title_tv,popularity_tv"
+        app:layout_constraintBottom_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </android.support.constraint.ConstraintLayout>
