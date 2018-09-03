@@ -10,7 +10,7 @@ import com.squareup.picasso.Picasso
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
-import kotlinx.android.synthetic.main.fragment_movie_details.*
+import kotlinx.android.synthetic.main.fragment_movie_details.view.*
 import me.zwsmith.moviefinder.R
 import me.zwsmith.moviefinder.core.dependencyInjection.ViewModelFactory
 import me.zwsmith.moviefinder.presentation.extensions.getInjector
@@ -47,7 +47,7 @@ class MovieDetailsFragment : Fragment() {
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribeBy(
                                     onSuccess = { movieDetailsViewState ->
-                                        update(movieDetailsViewState)
+                                        view?.update(movieDetailsViewState)
                                     },
                                     onError = { e -> Log.e(TAG, e.message, e) }
                             )
@@ -60,7 +60,7 @@ class MovieDetailsFragment : Fragment() {
                 )
     }
 
-    private fun update(viewState: MovieDetailsViewState) {
+    private fun View.update(viewState: MovieDetailsViewState) {
         title.text = viewState.title
         overview.text = viewState.overview
         Picasso.get()
