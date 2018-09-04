@@ -1,13 +1,14 @@
 package me.zwsmith.moviefinder.presentation.extensions
 
-import android.arch.lifecycle.ViewModel
-import android.arch.lifecycle.ViewModelProviders
-import android.support.annotation.LayoutRes
-import android.support.v4.app.Fragment
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.annotation.LayoutRes
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProviders
 import me.zwsmith.moviefinder.core.dependencyInjection.MoveFinderApplication
 import me.zwsmith.moviefinder.core.dependencyInjection.ViewModelFactory
 

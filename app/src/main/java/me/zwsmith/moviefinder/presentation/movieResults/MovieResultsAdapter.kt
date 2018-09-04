@@ -1,9 +1,9 @@
 package me.zwsmith.moviefinder.presentation.movieResults
 
 
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.movie_results_item.view.*
 import me.zwsmith.moviefinder.R

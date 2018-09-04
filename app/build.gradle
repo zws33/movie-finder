@@ -30,6 +30,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    configurations.all {
+        resolutionStrategy.force("androidx.legacy:legacy-support-v4:1.0.0-rc02")
+    }
 }
 
 ext {
@@ -57,6 +60,7 @@ dependencies {
     implementation "androidx.media:media:$support_version"
     implementation "androidx.recyclerview:recyclerview:$support_version"
     implementation "androidx.constraintlayout:constraintlayout:$constraint_layout_version"
+    implementation "androidx.constraintlayout:constraintlayout-solver:$constraint_layout_version"
     implementation('com.squareup.picasso:picasso:2.71828', {
         exclude group: 'com.android.support', module: 'exifinterface'
     })
@@ -75,7 +79,9 @@ dependencies {
 
     //Dependency Injection
     implementation "com.google.dagger:dagger:$dagger_version"
-    implementation "com.google.dagger:dagger-android-support:$dagger_version"
+    implementation ("com.google.dagger:dagger-android-support:$dagger_version", {
+        exclude group:'com.android.support'
+    })
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
 
     //Rx

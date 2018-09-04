@@ -1,6 +1,6 @@
 package me.zwsmith.moviefinder.presentation.movieDetails
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 import io.reactivex.Single
 import me.zwsmith.moviefinder.core.common.ResponseStatus
 import me.zwsmith.moviefinder.core.interactors.GetMovieDetailsInteractor

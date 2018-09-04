@@ -1,7 +1,7 @@
 package me.zwsmith.moviefinder.presentation.main
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import me.zwsmith.moviefinder.R
 import me.zwsmith.moviefinder.presentation.movieResults.MovieResultsFragment
 

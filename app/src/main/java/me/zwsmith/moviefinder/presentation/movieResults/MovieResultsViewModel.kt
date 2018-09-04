@@ -1,7 +1,7 @@
 package me.zwsmith.moviefinder.presentation.movieResults
 
-import android.arch.lifecycle.ViewModel
 import android.util.Log
+import androidx.lifecycle.ViewModel
 import io.reactivex.Observable
 import me.zwsmith.moviefinder.core.common.ResponseStatus
 import me.zwsmith.moviefinder.core.interactors.GetPopularMoviesStreamInteractor
