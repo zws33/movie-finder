@@ -1,7 +1,6 @@
 package me.zwsmith.moviefinder.presentation.movieResults
 
-import android.util.Log
-import androidx.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModel
 import io.reactivex.Observable
 import me.zwsmith.moviefinder.core.common.ResponseStatus
 import me.zwsmith.moviefinder.core.interactors.GetPopularMoviesStreamInteractor
@@ -11,17 +10,16 @@ import me.zwsmith.moviefinder.core.services.PopularMoviesResponse
 import javax.inject.Inject
 
 
-class MovieResultsViewModel @Inject constructor(
+class MovieBrowserViewModel @Inject constructor(
         private val refreshPopularMoviesInteractor: RefreshPopularMoviesInteractor,
         private val getPopularMoviesStreamInteractor: GetPopularMoviesStreamInteractor,
         private val requestNextPopularMoviesPageInteractor: RequestNextPopularMoviesPageInteractor
 ) : ViewModel() {
 
-    val movieListViewStateStream: Observable<MovieResultsViewState> =
+    val viewStateStream: Observable<MovieBrowserViewState> =
             getPopularMoviesStreamInteractor.popularMoviesStream
                     .map { responseStatus -> responseStatus.toMovieResultsState() }
-                    .map { state -> state.toMovieResultsViewState() }
-                    .doOnNext { Log.d(TAG, it.toString()) }
+                    .map { state -> state.toMovieBrowserViewState() }
                     .doOnSubscribe { refreshPopularMovies() }
 
     fun loadNextPage() {
@@ -65,25 +63,25 @@ class MovieResultsViewModel @Inject constructor(
         return MovieBrowserState.Success(movieList)
     }
 
-    private fun MovieBrowserState.toMovieResultsViewState(): MovieResultsViewState {
+    private fun MovieBrowserState.toMovieBrowserViewState(): MovieBrowserViewState {
         return when (this) {
             is MovieBrowserState.Success -> {
-                MovieResultsViewState(
+                MovieBrowserViewState(
                         isLoadingVisible = false,
                         isErrorVisible = false,
                         movieResults = movies.map { movie -> movie.toMovieItemViewState() }
                 )
             }
             MovieBrowserState.Loading -> {
-                MovieResultsViewState(
+                MovieBrowserViewState(
                         isLoadingVisible = true,
                         isErrorVisible = false,
                         movieResults = null
                 )
             }
             MovieBrowserState.Error -> {
-                MovieResultsViewState(
-                        isLoadingVisible = true,
+                MovieBrowserViewState(
+                        isLoadingVisible = false,
                         isErrorVisible = true,
                         movieResults = null
                 )
@@ -101,12 +99,12 @@ class MovieResultsViewModel @Inject constructor(
     }
 
     companion object {
-        private val TAG = MovieResultsViewModel::class.java.simpleName
+        private val TAG = MovieBrowserViewModel::class.java.simpleName
         private const val IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w45"
     }
 }
 
-data class MovieResultsViewState(
+data class MovieBrowserViewState(
         val isLoadingVisible: Boolean,
         val isErrorVisible: Boolean,
         val movieResults: List<MovieItemViewState>?

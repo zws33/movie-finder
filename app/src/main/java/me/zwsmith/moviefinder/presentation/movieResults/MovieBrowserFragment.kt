@@ -1,12 +1,12 @@
 package me.zwsmith.moviefinder.presentation.movieResults
 
 import android.os.Bundle
+import android.support.v4.app.Fragment
+import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.jakewharton.rxrelay2.BehaviorRelay
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -23,7 +23,7 @@ import javax.inject.Inject
 
 class MovieBrowserFragment : Fragment() {
 
-    private lateinit var viewModel: MovieResultsViewModel
+    private lateinit var viewModel: MovieBrowserViewModel
     private var compositeDisposable = CompositeDisposable()
     private val movieListViewStateRelay = BehaviorRelay.create<List<MovieItemViewState>>()
 
@@ -65,11 +65,13 @@ class MovieBrowserFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         compositeDisposable.add(
-                viewModel.movieListViewStateStream
-                        .doOnNext { Log.d(TAG, it.toString()) }
+                viewModel.viewStateStream
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeBy(
-                                onNext = { update(it) },
+                                onNext = {
+                                    Log.d(TAG, "MovieBrowserViewState = $it")
+                                    updateView(it)
+                                },
                                 onError = { Log.e(TAG, "Error message: ${it.message}", it) }
                         )
         )
@@ -77,16 +79,16 @@ class MovieBrowserFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        compositeDisposable.dispose()
+        compositeDisposable.clear()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        Log.d(TAG, "View was destroyed")
+        Log.d(TAG, "Destroy view called")
         movieListViewStateRelay.accept(emptyList())
     }
 
-    private fun update(viewState: MovieResultsViewState) {
+    private fun updateView(viewState: MovieBrowserViewState) {
         progress.isVisible = viewState.isLoadingVisible
         error_group.isVisible = viewState.isErrorVisible
         movies_rv.isVisible = viewState.movieResults != null

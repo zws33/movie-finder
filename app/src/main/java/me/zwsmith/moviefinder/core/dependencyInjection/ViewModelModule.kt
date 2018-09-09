@@ -1,12 +1,12 @@
 package me.zwsmith.moviefinder.core.dependencyInjection
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModelProvider
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
 import me.zwsmith.moviefinder.presentation.movieDetails.MovieDetailsViewModel
-import me.zwsmith.moviefinder.presentation.movieResults.MovieResultsViewModel
+import me.zwsmith.moviefinder.presentation.movieResults.MovieBrowserViewModel
 
 @Module
 abstract class ViewModelModule {
@@ -16,8 +16,8 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(MovieResultsViewModel::class)
-    internal abstract fun movieResultsViewModel(viewModel: MovieResultsViewModel): ViewModel
+    @ViewModelKey(MovieBrowserViewModel::class)
+    internal abstract fun movieResultsViewModel(viewModel: MovieBrowserViewModel): ViewModel
 
     @Binds
     @IntoMap

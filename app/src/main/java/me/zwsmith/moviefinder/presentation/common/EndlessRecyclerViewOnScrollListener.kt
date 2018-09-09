@@ -1,7 +1,7 @@
 package me.zwsmith.moviefinder.presentation.common
 
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 
 
 abstract class EndlessRecyclerOnScrollListener : RecyclerView.OnScrollListener() {
