@@ -7,7 +7,7 @@ import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import me.zwsmith.moviefinder.core.common.ApiKeyInterceptor
-import me.zwsmith.moviefinder.core.dependencyInjection.MoveFinderApplication
+import me.zwsmith.moviefinder.MoveFinderApplication
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
