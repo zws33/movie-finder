@@ -1,4 +1,4 @@
-package me.zwsmith.moviefinder.core.dependencyInjection
+package me.zwsmith.moviefinder.core.dependencyInjection.dagger
 
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
