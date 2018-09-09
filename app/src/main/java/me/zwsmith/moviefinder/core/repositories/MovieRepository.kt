@@ -28,7 +28,7 @@ class MovieRepository @Inject constructor(private val movieService: MovieService
         getPopularMovies(currentPopularPage)
     }
 
-    private fun getPopularMovies(pageNumber: Int = 1) {
+    private fun getPopularMovies(pageNumber: Int = INITIAL_POPULAR_MOVIES_PAGE) {
         movieService
                 .getPopularMovies(pageNumber)
                 .wrapResponse()
@@ -44,7 +44,8 @@ class MovieRepository @Inject constructor(private val movieService: MovieService
     }
 
     fun loadNextPopularMoviesPage() {
-        getPopularMovies(currentPopularPage++)
+        currentPopularPage++
+        getPopularMovies(currentPopularPage)
     }
 
     fun getMovieDetailsById(id: String): Single<ResponseStatus<MovieDetailsResponse>> {
