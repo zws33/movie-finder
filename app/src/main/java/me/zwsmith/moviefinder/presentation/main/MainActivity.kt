@@ -3,7 +3,7 @@ package me.zwsmith.moviefinder.presentation.main
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import me.zwsmith.moviefinder.R
-import me.zwsmith.moviefinder.presentation.movieResults.MovieResultsFragment
+import me.zwsmith.moviefinder.presentation.movieResults.MovieBrowserFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -13,7 +13,7 @@ class MainActivity : AppCompatActivity() {
 
         supportFragmentManager
                 .beginTransaction()
-                .add(R.id.root, MovieResultsFragment.newInstance())
+                .add(R.id.root, MovieBrowserFragment.newInstance())
                 .commit()
     }
 }

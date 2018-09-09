@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
-import kotlinx.android.synthetic.main.fragment_movie_results.*
+import kotlinx.android.synthetic.main.fragment_movie_browser.*
 import me.zwsmith.moviefinder.R
 import me.zwsmith.moviefinder.core.dependencyInjection.ViewModelFactory
 import me.zwsmith.moviefinder.presentation.common.EndlessRecyclerOnScrollListener
@@ -20,10 +20,10 @@ import me.zwsmith.moviefinder.presentation.extensions.isVisible
 import me.zwsmith.moviefinder.presentation.movieDetails.MovieDetailsFragment
 import javax.inject.Inject
 
-class MovieResultsFragment : Fragment() {
+class MovieBrowserFragment : Fragment() {
 
     private val movieListViewState = mutableListOf<MovieItemViewState>()
-    private val movieListAdapter = MovieResultsAdapter(movieListViewState, ::navigateToDetails)
+    private val movieListAdapter = MovieBrowserAdapter(movieListViewState, ::navigateToDetails)
 
     private lateinit var viewModel: MovieResultsViewModel
     private var compositeDisposable = CompositeDisposable()
@@ -42,7 +42,7 @@ class MovieResultsFragment : Fragment() {
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View {
-        return inflater.inflate(R.layout.fragment_movie_results, container, false)
+        return inflater.inflate(R.layout.fragment_movie_browser, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -99,10 +99,10 @@ class MovieResultsFragment : Fragment() {
     }
 
     companion object {
-        private val TAG = MovieResultsFragment::class.java.simpleName
+        private val TAG = MovieBrowserFragment::class.java.simpleName
 
         fun newInstance(): Fragment {
-            return MovieResultsFragment()
+            return MovieBrowserFragment()
         }
     }
 }

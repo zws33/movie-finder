@@ -32,7 +32,7 @@ class MovieResultsViewModel @Inject constructor(
         refreshPopularMoviesInteractor.refreshPopularMovies()
     }
 
-    private fun ResponseStatus<PopularMoviesResponse>.toMovieResultsState(): MovieResultsState {
+    private fun ResponseStatus<PopularMoviesResponse>.toMovieResultsState(): MovieBrowserState {
         return when (this) {
             is ResponseStatus.Complete -> {
                 when (this) {
@@ -40,48 +40,48 @@ class MovieResultsViewModel @Inject constructor(
                         handleSuccess(this)
                     }
                     is ResponseStatus.Complete.Error -> {
-                        MovieResultsState.Error
+                        MovieBrowserState.Error
                     }
                 }
             }
             ResponseStatus.Pending -> {
-                MovieResultsState.Loading
+                MovieBrowserState.Loading
             }
         }
     }
 
     private fun handleSuccess(
             responseStatus: ResponseStatus.Complete.Success<PopularMoviesResponse>
-    ): MovieResultsState.Success {
+    ): MovieBrowserState.Success {
         val response = responseStatus.value
         val movieList = response.popularMovies.map { popularMovie ->
-            MovieResultItem(
+            MovieBrowserItem(
                     popularMovie.id.toString(),
                     popularMovie.title,
                     popularMovie.popularity,
                     popularMovie.posterPath
             )
         }
-        return MovieResultsState.Success(movieList)
+        return MovieBrowserState.Success(movieList)
     }
 
-    private fun MovieResultsState.toMovieResultsViewState(): MovieResultsViewState {
+    private fun MovieBrowserState.toMovieResultsViewState(): MovieResultsViewState {
         return when (this) {
-            is MovieResultsState.Success -> {
+            is MovieBrowserState.Success -> {
                 MovieResultsViewState(
                         isLoadingVisible = false,
                         isErrorVisible = false,
-                        movieResults = movieResults.map { movie -> movie.toMovieItemViewState() }
+                        movieResults = movies.map { movie -> movie.toMovieItemViewState() }
                 )
             }
-            MovieResultsState.Loading -> {
+            MovieBrowserState.Loading -> {
                 MovieResultsViewState(
                         isLoadingVisible = true,
                         isErrorVisible = false,
                         movieResults = null
                 )
             }
-            MovieResultsState.Error -> {
+            MovieBrowserState.Error -> {
                 MovieResultsViewState(
                         isLoadingVisible = true,
                         isErrorVisible = true,
@@ -91,7 +91,7 @@ class MovieResultsViewModel @Inject constructor(
         }
     }
 
-    private fun MovieResultItem.toMovieItemViewState(): MovieItemViewState {
+    private fun MovieBrowserItem.toMovieItemViewState(): MovieItemViewState {
         return MovieItemViewState(
                 id,
                 title,

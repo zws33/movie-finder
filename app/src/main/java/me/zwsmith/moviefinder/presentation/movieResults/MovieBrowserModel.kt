@@ -1,20 +1,20 @@
 package me.zwsmith.moviefinder.presentation.movieResults
 
-sealed class MovieResultsState {
-    object Loading : MovieResultsState() {
+sealed class MovieBrowserState {
+    object Loading : MovieBrowserState() {
         override fun toString(): String = Loading::class.java.simpleName
     }
 
-    object Error : MovieResultsState() {
+    object Error : MovieBrowserState() {
         override fun toString(): String = Loading::class.java.simpleName
     }
 
     data class Success(
-            val movieResults: List<MovieResultItem>
-    ) : MovieResultsState()
+            val movies: List<MovieBrowserItem>
+    ) : MovieBrowserState()
 }
 
-data class MovieResultItem(
+data class MovieBrowserItem(
         val id: String,
         val title: String,
         val popularity: Double,
