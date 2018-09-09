@@ -1,4 +1,4 @@
-package me.zwsmith.moviefinder.core.dependencyInjection
+package me.zwsmith.moviefinder.core.dependencyInjection.dagger
 
 import androidx.lifecycle.ViewModel
 import dagger.MapKey

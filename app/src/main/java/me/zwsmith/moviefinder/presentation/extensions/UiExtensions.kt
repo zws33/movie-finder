@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProviders
 import me.zwsmith.moviefinder.core.dependencyInjection.MoveFinderApplication
-import me.zwsmith.moviefinder.core.dependencyInjection.ViewModelFactory
+import me.zwsmith.moviefinder.core.dependencyInjection.dagger.ViewModelFactory
 
 fun Fragment.getInjector() = (this.activity!!.application as MoveFinderApplication).injector
 

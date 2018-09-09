@@ -1,4 +1,4 @@
-package me.zwsmith.moviefinder.core.dependencyInjection
+package me.zwsmith.moviefinder.core.dependencyInjection.dagger
 
 import android.content.Context
 import com.google.gson.FieldNamingPolicy
@@ -7,6 +7,7 @@ import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import me.zwsmith.moviefinder.core.common.ApiKeyInterceptor
+import me.zwsmith.moviefinder.core.dependencyInjection.MoveFinderApplication
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory

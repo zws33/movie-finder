@@ -13,7 +13,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.fragment_movie_browser.*
 import me.zwsmith.moviefinder.R
-import me.zwsmith.moviefinder.core.dependencyInjection.ViewModelFactory
+import me.zwsmith.moviefinder.core.dependencyInjection.dagger.ViewModelFactory
 import me.zwsmith.moviefinder.presentation.common.EndlessRecyclerOnScrollListener
 import me.zwsmith.moviefinder.presentation.extensions.getInjector
 import me.zwsmith.moviefinder.presentation.extensions.getViewModel

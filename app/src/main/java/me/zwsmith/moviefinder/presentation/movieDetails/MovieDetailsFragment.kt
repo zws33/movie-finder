@@ -12,7 +12,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.fragment_movie_details.view.*
 import me.zwsmith.moviefinder.R
-import me.zwsmith.moviefinder.core.dependencyInjection.ViewModelFactory
+import me.zwsmith.moviefinder.core.dependencyInjection.dagger.ViewModelFactory
 import me.zwsmith.moviefinder.presentation.extensions.getInjector
 import me.zwsmith.moviefinder.presentation.extensions.getViewModel
 import javax.inject.Inject
