@@ -79,7 +79,6 @@ class MovieBrowserFragment : Fragment() {
     override fun onStop() {
         super.onStop()
         compositeDisposable.dispose()
-        movie_results_rv?.invalidate()
     }
 
     private fun update(viewState: MovieResultsViewState) {

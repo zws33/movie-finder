@@ -7,18 +7,14 @@ import androidx.recyclerview.widget.RecyclerView
 abstract class EndlessRecyclerOnScrollListener : RecyclerView.OnScrollListener() {
     private var previousTotal = 0
     private var loading = true
-    private val visibleThreshold = 10
-    private var lastVisibleItem = 0
-    private var visibleItemCount = 0
-    private var totalItemCount = 0
 
     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
         super.onScrolled(recyclerView, dx, dy)
 
-        visibleItemCount = recyclerView.childCount
+        val visibleItemCount = recyclerView.childCount
         val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-        totalItemCount = layoutManager.itemCount
-        lastVisibleItem = layoutManager.findLastVisibleItemPosition()
+        val totalItemCount = layoutManager.itemCount
+        val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
 
         if (dy > 0) {
             if (loading) {
@@ -28,7 +24,10 @@ abstract class EndlessRecyclerOnScrollListener : RecyclerView.OnScrollListener()
                 }
             }
 
-            if (!loading && (totalItemCount - visibleItemCount) <= (lastVisibleItem + visibleThreshold)) {
+            if (!loading
+                    && (visibleItemCount + firstVisibleItemPosition) >= totalItemCount
+                    && firstVisibleItemPosition >= 0
+            ) {
                 requestData()
                 loading = true
             }
