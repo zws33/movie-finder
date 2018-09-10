@@ -27,7 +27,6 @@ class FeatureToggles {
             }
         }
 
-
         private val TAG = FeatureToggles::class.java.simpleName
     }
 }

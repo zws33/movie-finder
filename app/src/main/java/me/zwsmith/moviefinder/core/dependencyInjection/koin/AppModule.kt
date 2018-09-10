@@ -17,7 +17,6 @@ val appModule = module {
     single { provideRetroFitInstance(get(), get()) }
 }
 
-
 private fun provideRetroFitInstance(gson: Gson, okHttpClient: OkHttpClient): Retrofit {
     return Retrofit.Builder()
             .client(okHttpClient)
@@ -27,11 +26,9 @@ private fun provideRetroFitInstance(gson: Gson, okHttpClient: OkHttpClient): Ret
             .build()
 }
 
-
 private fun provideApiKeyInterceptor(): ApiKeyInterceptor {
     return ApiKeyInterceptor()
 }
-
 
 private fun provideOkHttpClient(apiKeyInterceptor: ApiKeyInterceptor): OkHttpClient {
     return OkHttpClient.Builder()
