@@ -5,8 +5,8 @@ import android.arch.lifecycle.ViewModelProvider
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
+import me.zwsmith.moviefinder.presentation.movieBrowser.MovieBrowserViewModel
 import me.zwsmith.moviefinder.presentation.movieDetails.MovieDetailsViewModel
-import me.zwsmith.moviefinder.presentation.movieResults.MovieBrowserViewModel
 
 @Module
 abstract class ViewModelModule {

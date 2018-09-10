@@ -10,7 +10,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class GetPopularMoviesStreamInteractor @Inject constructor(
+class GetPopularMoviesInteractor @Inject constructor(
         private val movieRepository: MovieRepository
 ) {
     val popularMoviesStream: Observable<ResponseStatus<PopularMoviesResponse>> =
