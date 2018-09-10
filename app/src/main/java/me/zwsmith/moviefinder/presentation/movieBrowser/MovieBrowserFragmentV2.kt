@@ -13,9 +13,9 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.fragment_movie_browser.*
 import me.zwsmith.moviefinder.R
+import me.zwsmith.moviefinder.core.common.FeatureToggles
 import me.zwsmith.moviefinder.presentation.common.EndlessRecyclerOnScrollListener
 import me.zwsmith.moviefinder.presentation.extensions.isVisible
-import me.zwsmith.moviefinder.presentation.movieDetails.MovieDetailsFragment
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class MovieBrowserFragmentV2 : Fragment() {
@@ -45,7 +45,7 @@ class MovieBrowserFragmentV2 : Fragment() {
     private fun navigateToDetails(movieId: String) {
         fragmentManager
                 ?.beginTransaction()
-                ?.replace(R.id.root, MovieDetailsFragment.newInstance(movieId))
+                ?.replace(R.id.root, FeatureToggles.getMovieDetailsFragment(movieId))
                 ?.addToBackStack(null)
                 ?.commit()
     }

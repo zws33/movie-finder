@@ -1,6 +1,7 @@
 package me.zwsmith.moviefinder
 
 import android.app.Application
+import me.zwsmith.moviefinder.core.common.FeatureToggles
 import me.zwsmith.moviefinder.core.dependencyInjection.dagger.AppModule
 import me.zwsmith.moviefinder.core.dependencyInjection.dagger.DaggerInjector
 import me.zwsmith.moviefinder.core.dependencyInjection.dagger.Injector
@@ -13,8 +14,11 @@ class MoveFinderApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        initDagger()
-        startKoin(this, koinModules)
+        if (FeatureToggles.KOIN_ENABLED) {
+            startKoin(this, koinModules)
+        } else {
+            initDagger()
+        }
     }
 
     private val koinModules = listOf(
