@@ -14,15 +14,15 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class MovieRepository @Inject constructor(private val movieService: MovieService) {
+class MovieRepositoryImpl @Inject constructor(private val movieService: MovieService) : MovieRepository {
 
     private val popularMoviesRelay = BehaviorRelay.create<ResponseStatus<PopularMoviesResponse>>()
 
-    val popularMoviesStream: Observable<ResponseStatus<PopularMoviesResponse>> = popularMoviesRelay
+    override val popularMoviesStream: Observable<ResponseStatus<PopularMoviesResponse>> = popularMoviesRelay
 
     private var currentPopularPage = INITIAL_POPULAR_MOVIES_PAGE
 
-    fun refreshPopularMovies() {
+    override fun refreshPopularMovies() {
         currentPopularPage = INITIAL_POPULAR_MOVIES_PAGE
         popularMoviesRelay.accept(ResponseStatus.Pending)
         getPopularMovies(currentPopularPage)
@@ -43,17 +43,24 @@ class MovieRepository @Inject constructor(private val movieService: MovieService
                 )
     }
 
-    fun loadNextPopularMoviesPage() {
+    override fun loadNextPopularMoviesPage() {
         currentPopularPage++
         getPopularMovies(currentPopularPage)
     }
 
-    fun getMovieDetailsById(id: String): Single<ResponseStatus<MovieDetailsResponse>> {
+    override fun getMovieDetailsById(id: String): Single<ResponseStatus<MovieDetailsResponse>> {
         return movieService.getMovieDetailsById(id).wrapResponse()
     }
 
     companion object {
-        private val TAG = MovieRepository::class.java.simpleName
+        private val TAG = MovieRepositoryImpl::class.java.simpleName
         private const val INITIAL_POPULAR_MOVIES_PAGE = 1
     }
+}
+
+interface MovieRepository {
+    val popularMoviesStream: Observable<ResponseStatus<PopularMoviesResponse>>
+    fun refreshPopularMovies()
+    fun loadNextPopularMoviesPage()
+    fun getMovieDetailsById(id: String): Single<ResponseStatus<MovieDetailsResponse>>
 }
