@@ -1,4 +1,4 @@
-package me.zwsmith.moviefinder.core.dependencyInjection
+package me.zwsmith.moviefinder.core.dependencyInjection.dagger
 
 import dagger.Module
 import dagger.Provides

@@ -77,18 +77,22 @@ dependencies {
     //Serialization
     implementation "com.google.code.gson:gson:$gson_version"
 
-    //Dependency Injection
+    //Dependency Injection - Dagger
     implementation "com.google.dagger:dagger:$dagger_version"
     implementation ("com.google.dagger:dagger-android-support:$dagger_version", {
         exclude group:'com.android.support'
     })
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
 
+    //Dependency Injection - Koin
+    implementation 'org.koin:koin-android:1.0.0-RC-2'
+    implementation 'org.koin:koin-android-viewmodel:1.0.0-RC-2'
+
     //Rx
-    implementation "io.reactivex.rxjava2:rxjava:$rx_java_version"
-    implementation "io.reactivex.rxjava2:rxandroid:$rx_android_version"
-    implementation "com.jakewharton.rxrelay2:rxrelay:$rx_relay_version"
-    implementation "io.reactivex.rxjava2:rxkotlin:$rx_kotlin_version"
+    implementation "io.reactivex.rxjava2:rxjava:2.1.14"
+    implementation "io.reactivex.rxjava2:rxandroid:2.0.2"
+    implementation "com.jakewharton.rxrelay2:rxrelay:2.0.0"
+    implementation "io.reactivex.rxjava2:rxkotlin:2.2.0"
 
     implementation "joda-time:joda-time:2.9.9"
 

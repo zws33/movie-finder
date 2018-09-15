@@ -12,24 +12,11 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.fragment_movie_details.view.*
 import me.zwsmith.moviefinder.R
-import me.zwsmith.moviefinder.core.dependencyInjection.dagger.ViewModelFactory
-import me.zwsmith.moviefinder.presentation.extensions.getInjector
-import me.zwsmith.moviefinder.presentation.extensions.getViewModel
-import javax.inject.Inject
+import org.koin.android.viewmodel.ext.android.viewModel
 
-class MovieDetailsFragment : Fragment() {
-
-    private lateinit var viewModel: MovieDetailsViewModel
+class MovieDetailsFragmentV2 : Fragment() {
+    private val movieDetailsViewModel: MovieDetailsViewModel by viewModel()
     private var compositeDisposable = CompositeDisposable()
-
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        getInjector().inject(this)
-        viewModel = getViewModel(viewModelFactory)
-    }
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -43,7 +30,7 @@ class MovieDetailsFragment : Fragment() {
         super.onStart()
         arguments?.getString(MOVIE_ID, null)?.let {
             compositeDisposable.add(
-                    viewModel.getMovieDetailsViewState(it)
+                    movieDetailsViewModel.getMovieDetailsViewState(it)
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribeBy(
                                     onSuccess = { movieDetailsViewState ->
@@ -60,6 +47,11 @@ class MovieDetailsFragment : Fragment() {
                 )
     }
 
+    override fun onStop() {
+        super.onStop()
+        compositeDisposable.dispose()
+    }
+
     private fun View.update(viewState: MovieDetailsViewState) {
         title.text = viewState.title
         overview.text = viewState.overview
@@ -71,7 +63,7 @@ class MovieDetailsFragment : Fragment() {
 
     companion object {
         private val TAG = MovieDetailsFragment::class.java.simpleName
-        fun newInstance(movieId: String) = MovieDetailsFragment().apply {
+        fun newInstance(movieId: String) = MovieDetailsFragmentV2().apply {
             arguments = Bundle().apply {
                 putString(MOVIE_ID, movieId)
             }
