@@ -13,7 +13,7 @@ class MainActivity : AppCompatActivity() {
 
         supportFragmentManager
                 .beginTransaction()
-                .add(R.id.root, FeatureToggles.getMovieBrowserFragement())
+                .add(R.id.root, FeatureToggles.getMovieBrowserFragment())
                 .commit()
     }
 }

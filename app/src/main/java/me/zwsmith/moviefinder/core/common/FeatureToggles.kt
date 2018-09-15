@@ -1,6 +1,7 @@
 package me.zwsmith.moviefinder.core.common
 
 import android.support.v4.app.Fragment
+import me.zwsmith.moviefinder.BuildConfig
 import me.zwsmith.moviefinder.presentation.movieBrowser.MovieBrowserFragment
 import me.zwsmith.moviefinder.presentation.movieBrowser.MovieBrowserFragmentV2
 import me.zwsmith.moviefinder.presentation.movieDetails.MovieDetailsFragment
@@ -9,10 +10,8 @@ import me.zwsmith.moviefinder.presentation.movieDetails.MovieDetailsFragmentV2
 class FeatureToggles {
     companion object {
 
-        const val KOIN_ENABLED = false
-
-        fun getMovieBrowserFragement(): Fragment {
-            return if (KOIN_ENABLED) {
+        fun getMovieBrowserFragment(): Fragment {
+            return if (BuildConfig.KOIN_ENABLED) {
                 MovieBrowserFragmentV2.newInstance()
             } else {
                 MovieBrowserFragment.newInstance()
@@ -20,7 +19,7 @@ class FeatureToggles {
         }
 
         fun getMovieDetailsFragment(movieId: String): Fragment {
-            return if (KOIN_ENABLED) {
+            return if (BuildConfig.KOIN_ENABLED) {
                 MovieDetailsFragmentV2.newInstance(movieId)
             } else {
                 MovieDetailsFragment.newInstance(movieId)

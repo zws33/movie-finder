@@ -10,6 +10,9 @@ def localPropertiesFile = rootProject.file("local.properties")
 def localProperties = new Properties()
 localProperties.load(new FileInputStream(localPropertiesFile))
 
+def featureToggles = new Properties()
+featureToggles.load(new FileInputStream(rootProject.file("featureToggles.properties")))
+
 android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -23,6 +26,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        buildConfigField 'boolean', "KOIN_ENABLED", featureToggles.getProperty("KOIN_ENABLED")
     }
     buildTypes {
         debug {
@@ -79,8 +83,8 @@ dependencies {
 
     //Dependency Injection - Dagger
     implementation "com.google.dagger:dagger:$dagger_version"
-    implementation ("com.google.dagger:dagger-android-support:$dagger_version", {
-        exclude group:'com.android.support'
+    implementation("com.google.dagger:dagger-android-support:$dagger_version", {
+        exclude group: 'com.android.support'
     })
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
 
