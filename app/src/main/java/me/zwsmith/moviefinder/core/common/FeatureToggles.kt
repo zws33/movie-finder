@@ -9,7 +9,7 @@ import me.zwsmith.moviefinder.presentation.movieDetails.MovieDetailsFragmentV2
 class FeatureToggles {
     companion object {
 
-        const val KOIN_ENABLED = true
+        const val KOIN_ENABLED = false
 
         fun getMovieBrowserFragement(): Fragment {
             return if (KOIN_ENABLED) {
