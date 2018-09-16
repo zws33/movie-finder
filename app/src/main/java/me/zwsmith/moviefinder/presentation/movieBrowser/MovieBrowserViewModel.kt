@@ -6,28 +6,29 @@ import me.zwsmith.moviefinder.core.common.ResponseStatus
 import me.zwsmith.moviefinder.core.interactors.GetPopularMoviesInteractor
 import me.zwsmith.moviefinder.core.interactors.RefreshPopularMoviesInteractor
 import me.zwsmith.moviefinder.core.interactors.RequestNextPopularMoviesPageInteractor
+import me.zwsmith.moviefinder.core.repositories.MovieRepository
 import me.zwsmith.moviefinder.core.services.PopularMoviesResponse
 import javax.inject.Inject
 
 
 class MovieBrowserViewModel @Inject constructor(
-        private val refreshPopularMoviesInteractor: RefreshPopularMoviesInteractor,
-        private val getPopularMoviesInteractor: GetPopularMoviesInteractor,
-        private val requestNextPopularMoviesPageInteractor: RequestNextPopularMoviesPageInteractor
+        private val movieRepository: MovieRepository
 ) : ViewModel() {
 
+    //...
+
     val viewStateStream: Observable<MovieBrowserViewState> =
-            getPopularMoviesInteractor.popularMoviesStream
+            movieRepository.popularMoviesStream
                     .map { responseStatus -> responseStatus.toMovieResultsState() }
                     .map { state -> state.toMovieBrowserViewState() }
                     .doOnSubscribe { refreshPopularMovies() }
 
     fun loadNextPage() {
-        requestNextPopularMoviesPageInteractor.requestNextPage()
+        movieRepository.loadNextPopularMoviesPage()
     }
 
     private fun refreshPopularMovies() {
-        refreshPopularMoviesInteractor.refreshPopularMovies()
+        movieRepository.refreshPopularMovies()
     }
 
     private fun ResponseStatus<PopularMoviesResponse>.toMovieResultsState(): MovieBrowserState {
