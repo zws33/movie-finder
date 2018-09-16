@@ -13,11 +13,7 @@ class MoveFinderApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        if (BuildConfig.KOIN_ENABLED) {
-            startKoin(this, koinModules)
-        } else {
-            initDagger()
-        }
+        startKoin(this, koinModules)
     }
 
     private val koinModules = listOf(
@@ -27,10 +23,4 @@ class MoveFinderApplication : Application() {
             interactorModule,
             viewModelModule
     )
-
-    private fun initDagger() {
-        injector = DaggerInjector.builder()
-                .appModule(AppModule(this))
-                .build()
-    }
 }
