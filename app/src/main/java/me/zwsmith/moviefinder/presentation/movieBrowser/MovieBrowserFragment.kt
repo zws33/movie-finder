@@ -13,28 +13,16 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.fragment_movie_browser.*
 import me.zwsmith.moviefinder.R
-import me.zwsmith.moviefinder.core.common.FeatureToggles
-import me.zwsmith.moviefinder.core.dependencyInjection.dagger.ViewModelFactory
 import me.zwsmith.moviefinder.presentation.common.EndlessRecyclerOnScrollListener
-import me.zwsmith.moviefinder.presentation.extensions.getInjector
-import me.zwsmith.moviefinder.presentation.extensions.getViewModel
 import me.zwsmith.moviefinder.presentation.extensions.isVisible
-import javax.inject.Inject
+import me.zwsmith.moviefinder.presentation.movieDetails.MovieDetailsFragment
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class MovieBrowserFragment : Fragment() {
 
-    private lateinit var viewModel: MovieBrowserViewModel
+    private val movieBrowserViewModel: MovieBrowserViewModel by viewModel()
     private var compositeDisposable = CompositeDisposable()
     private val movieListViewStateRelay = BehaviorRelay.create<List<MovieItemViewState>>()
-
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        getInjector().inject(this)
-        viewModel = getViewModel(viewModelFactory)
-    }
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -57,7 +45,7 @@ class MovieBrowserFragment : Fragment() {
     private fun navigateToDetails(movieId: String) {
         fragmentManager
                 ?.beginTransaction()
-                ?.replace(R.id.root, FeatureToggles.getMovieDetailsFragment(movieId))
+                ?.replace(R.id.root, MovieDetailsFragment.newInstance(movieId))
                 ?.addToBackStack(null)
                 ?.commit()
     }
@@ -65,7 +53,7 @@ class MovieBrowserFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         compositeDisposable.add(
-                viewModel.viewStateStream
+                movieBrowserViewModel.viewStateStream
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeBy(
                                 onNext = {
@@ -99,7 +87,7 @@ class MovieBrowserFragment : Fragment() {
 
     private val onScrollListener = object : EndlessRecyclerOnScrollListener() {
         override fun requestData() {
-            viewModel.loadNextPage()
+            movieBrowserViewModel.loadNextPage()
         }
     }
 

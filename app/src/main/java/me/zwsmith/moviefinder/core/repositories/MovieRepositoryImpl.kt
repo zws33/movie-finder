@@ -10,11 +10,8 @@ import me.zwsmith.moviefinder.core.common.wrapResponse
 import me.zwsmith.moviefinder.core.services.MovieDetailsResponse
 import me.zwsmith.moviefinder.core.services.MovieService
 import me.zwsmith.moviefinder.core.services.PopularMoviesResponse
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class MovieRepositoryImpl @Inject constructor(private val movieService: MovieService) : MovieRepository {
+class MovieRepositoryImpl(private val movieService: MovieService) : MovieRepository {
 
     private val popularMoviesRelay = BehaviorRelay.create<ResponseStatus<PopularMoviesResponse>>()
 

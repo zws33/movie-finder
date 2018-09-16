@@ -1,16 +1,10 @@
 package me.zwsmith.moviefinder
 
 import android.app.Application
-import me.zwsmith.moviefinder.core.dependencyInjection.dagger.AppModule
-import me.zwsmith.moviefinder.core.dependencyInjection.dagger.DaggerInjector
-import me.zwsmith.moviefinder.core.dependencyInjection.dagger.Injector
 import me.zwsmith.moviefinder.core.dependencyInjection.koin.*
 import org.koin.android.ext.android.startKoin
 
-class MoveFinderApplication : Application() {
-
-    lateinit var injector: Injector private set
-
+class MovieFinderApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         startKoin(this, koinModules)

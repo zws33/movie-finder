@@ -5,9 +5,8 @@ import io.reactivex.Single
 import me.zwsmith.moviefinder.core.common.ResponseStatus
 import me.zwsmith.moviefinder.core.interactors.GetMovieDetailsInteractor
 import me.zwsmith.moviefinder.core.services.MovieDetailsResponse
-import javax.inject.Inject
 
-class MovieDetailsViewModel @Inject constructor(
+class MovieDetailsViewModel constructor(
         private val getMovieDetailsInteractor: GetMovieDetailsInteractor
 ) : ViewModel() {
 

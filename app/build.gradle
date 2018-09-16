@@ -81,13 +81,6 @@ dependencies {
     //Serialization
     implementation "com.google.code.gson:gson:$gson_version"
 
-    //Dependency Injection - Dagger
-    implementation "com.google.dagger:dagger:$dagger_version"
-    implementation("com.google.dagger:dagger-android-support:$dagger_version", {
-        exclude group: 'com.android.support'
-    })
-    kapt "com.google.dagger:dagger-compiler:$dagger_version"
-
     //Dependency Injection - Koin
     implementation 'org.koin:koin-android:1.0.0-RC-2'
     implementation 'org.koin:koin-android-viewmodel:1.0.0-RC-2'
