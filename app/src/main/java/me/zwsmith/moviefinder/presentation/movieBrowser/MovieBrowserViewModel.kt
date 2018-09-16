@@ -6,9 +6,7 @@ import me.zwsmith.moviefinder.core.common.ResponseStatus
 import me.zwsmith.moviefinder.core.repositories.MovieRepository
 import me.zwsmith.moviefinder.core.services.PopularMoviesResponse
 
-class MovieBrowserViewModel(
-        private val movieRepository: MovieRepository
-) : ViewModel() {
+class MovieBrowserViewModel(private val movieRepository: MovieRepository) : ViewModel() {
 
     val viewStateStream: Observable<MovieBrowserViewState> =
             movieRepository.popularMoviesStream
