@@ -13,8 +13,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 val appModule = module {
     single { provideGson() }
     single { provideApiKeyInterceptor() }
-    single { provideOkHttpClient(get()) }
-    single { provideRetroFitInstance(get(), get()) }
+    single { provideOkHttpClient(apiKeyInterceptor = get()) }
+    single { provideRetroFitInstance(gson = get(), okHttpClient = get()) }
 }
 
 private fun provideRetroFitInstance(gson: Gson, okHttpClient: OkHttpClient): Retrofit {
