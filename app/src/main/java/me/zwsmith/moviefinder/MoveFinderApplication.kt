@@ -7,7 +7,7 @@ import me.zwsmith.moviefinder.core.dependencyInjection.dagger.Injector
 import me.zwsmith.moviefinder.core.dependencyInjection.koin.*
 import org.koin.android.ext.android.startKoin
 
-class MoveFinderApplication : Application() {
+class MovieFinderApplication : Application() {
 
     lateinit var injector: Injector private set
 

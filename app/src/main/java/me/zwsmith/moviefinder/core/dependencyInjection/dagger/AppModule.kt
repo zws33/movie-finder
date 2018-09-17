@@ -6,8 +6,8 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
+import me.zwsmith.moviefinder.MovieFinderApplication
 import me.zwsmith.moviefinder.core.common.ApiKeyInterceptor
-import me.zwsmith.moviefinder.MoveFinderApplication
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -16,10 +16,10 @@ import javax.inject.Singleton
 
 
 @Module
-class AppModule(private val application: MoveFinderApplication) {
+class AppModule(private val application: MovieFinderApplication) {
     @Provides
     @Singleton
-    fun provideApplication(): MoveFinderApplication {
+    fun provideApplication(): MovieFinderApplication {
         return application
     }
 
