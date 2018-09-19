@@ -88,10 +88,6 @@ dependencies {
     })
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
 
-    //Dependency Injection - Koin
-    implementation 'org.koin:koin-android:1.0.0-RC-2'
-    implementation 'org.koin:koin-android-viewmodel:1.0.0-RC-2'
-
     //Rx
     implementation "io.reactivex.rxjava2:rxjava:2.1.14"
     implementation "io.reactivex.rxjava2:rxandroid:2.0.2"

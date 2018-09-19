@@ -13,12 +13,12 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.fragment_movie_browser.*
 import me.zwsmith.moviefinder.R
-import me.zwsmith.moviefinder.core.common.FeatureToggles
 import me.zwsmith.moviefinder.core.dependencyInjection.dagger.ViewModelFactory
 import me.zwsmith.moviefinder.presentation.common.EndlessRecyclerOnScrollListener
 import me.zwsmith.moviefinder.presentation.extensions.getInjector
 import me.zwsmith.moviefinder.presentation.extensions.getViewModel
 import me.zwsmith.moviefinder.presentation.extensions.isVisible
+import me.zwsmith.moviefinder.presentation.movieDetails.MovieDetailsFragment
 import javax.inject.Inject
 
 class MovieBrowserFragment : Fragment() {
@@ -57,7 +57,7 @@ class MovieBrowserFragment : Fragment() {
     private fun navigateToDetails(movieId: String) {
         fragmentManager
                 ?.beginTransaction()
-                ?.replace(R.id.root, FeatureToggles.getMovieDetailsFragment(movieId))
+                ?.replace(R.id.root, MovieDetailsFragment.newInstance(movieId))
                 ?.addToBackStack(null)
                 ?.commit()
     }

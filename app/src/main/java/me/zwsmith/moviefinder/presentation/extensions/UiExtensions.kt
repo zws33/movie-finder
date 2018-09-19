@@ -9,10 +9,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import me.zwsmith.moviefinder.MoveFinderApplication
+import me.zwsmith.moviefinder.MovieFinderApplication
 import me.zwsmith.moviefinder.core.dependencyInjection.dagger.ViewModelFactory
 
-fun Fragment.getInjector() = (this.activity!!.application as MoveFinderApplication).injector
+fun Fragment.getInjector() = (this.activity!!.application as MovieFinderApplication).injector
 
 var View.isVisible: Boolean
     get() = visibility == View.VISIBLE

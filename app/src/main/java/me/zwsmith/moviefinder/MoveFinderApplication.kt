@@ -4,8 +4,6 @@ import android.app.Application
 import me.zwsmith.moviefinder.core.dependencyInjection.dagger.AppModule
 import me.zwsmith.moviefinder.core.dependencyInjection.dagger.DaggerInjector
 import me.zwsmith.moviefinder.core.dependencyInjection.dagger.Injector
-import me.zwsmith.moviefinder.core.dependencyInjection.koin.*
-import org.koin.android.ext.android.startKoin
 
 class MovieFinderApplication : Application() {
 
