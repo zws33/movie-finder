@@ -1,5 +1,6 @@
 package me.zwsmith.moviefinder.presentation.movieBrowser
 
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -13,14 +14,21 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.fragment_movie_browser.*
 import me.zwsmith.moviefinder.R
+import me.zwsmith.moviefinder.core.dependencyInjection.kodein.MovieBrowserViewModelFactory
 import me.zwsmith.moviefinder.presentation.common.EndlessRecyclerOnScrollListener
 import me.zwsmith.moviefinder.presentation.extensions.isVisible
 import me.zwsmith.moviefinder.presentation.movieDetails.MovieDetailsFragment
-import org.koin.android.viewmodel.ext.android.viewModel
+import org.kodein.di.Kodein
+import org.kodein.di.KodeinAware
+import org.kodein.di.android.support.closestKodein
+import org.kodein.di.generic.instance
 
-class MovieBrowserFragment : Fragment() {
-
-    private val movieBrowserViewModel: MovieBrowserViewModel by viewModel()
+class MovieBrowserFragment : Fragment(), KodeinAware {
+    override val kodein: Kodein by closestKodein()
+    private val viewModelFactory: MovieBrowserViewModelFactory by instance()
+    private val movieBrowserViewModel: MovieBrowserViewModel by lazy {
+        ViewModelProviders.of(this, viewModelFactory).get(MovieBrowserViewModel::class.java)
+    }
     private var compositeDisposable = CompositeDisposable()
     private val movieListViewStateRelay = BehaviorRelay.create<List<MovieItemViewState>>()
 

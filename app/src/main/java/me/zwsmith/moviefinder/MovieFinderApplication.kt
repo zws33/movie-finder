@@ -4,6 +4,7 @@ import android.app.Application
 import me.zwsmith.moviefinder.core.dependencyInjection.kodein.appModule
 import me.zwsmith.moviefinder.core.dependencyInjection.kodein.repositoryModule
 import me.zwsmith.moviefinder.core.dependencyInjection.kodein.serviceModule
+import me.zwsmith.moviefinder.core.dependencyInjection.kodein.viewModelModule
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
 
@@ -12,5 +13,6 @@ class MovieFinderApplication : Application(), KodeinAware {
         import(appModule)
         import(serviceModule)
         import(repositoryModule)
+        import(viewModelModule)
     }
 }

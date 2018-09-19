@@ -1,5 +1,7 @@
 package me.zwsmith.moviefinder.core.dependencyInjection.kodein
 
+import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModelProvider
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -7,6 +9,7 @@ import me.zwsmith.moviefinder.core.common.ApiKeyInterceptor
 import me.zwsmith.moviefinder.core.repositories.MovieRepository
 import me.zwsmith.moviefinder.core.repositories.MovieRepositoryImpl
 import me.zwsmith.moviefinder.core.services.MovieService
+import me.zwsmith.moviefinder.presentation.movieBrowser.MovieBrowserViewModel
 import okhttp3.OkHttpClient
 import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
@@ -30,8 +33,31 @@ val serviceModule = Kodein.Module(name = "ServiceModule") {
 }
 
 val repositoryModule = Kodein.Module(name = "RepositoryModule") {
-    bind<MovieRepository>() with singleton { MovieRepositoryImpl(movieService = instance()) as MovieRepository }
+    bind<MovieRepository>() with singleton {
+        MovieRepositoryImpl(movieService = instance()) as MovieRepository
+    }
 }
+
+val viewModelModule = Kodein.Module(name = "ViewModelModule") {
+    bind<MovieBrowserViewModel>() with singleton {
+        MovieBrowserViewModel(movieRepository = instance())
+    }
+    bind<MovieBrowserViewModelFactory>() with singleton {
+        MovieBrowserViewModelFactory(movieBrowserViewModel = instance())
+    }
+}
+
+@Suppress("UNCHECKED_CAST")
+class MovieBrowserViewModelFactory constructor(
+        private val movieBrowserViewModel: MovieBrowserViewModel
+) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(MovieBrowserViewModel::class.java)) {
+            return movieBrowserViewModel as T
+        } else throw IllegalArgumentException("Unknown ViewModel class")
+    }
+}
+
 
 private inline fun <reified T> createService(retrofit: Retrofit): T {
     return retrofit.create(T::class.java)
