@@ -13,20 +13,8 @@ class MovieFinderApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        if (BuildConfig.KOIN_ENABLED) {
-            startKoin(this, koinModules)
-        } else {
-            initDagger()
-        }
+        initDagger()
     }
-
-    private val koinModules = listOf(
-            appModule,
-            serviceModule,
-            repositoryModule,
-            interactorModule,
-            viewModelModule
-    )
 
     private fun initDagger() {
         injector = DaggerInjector.builder()
@@ -34,3 +22,4 @@ class MovieFinderApplication : Application() {
                 .build()
     }
 }
+

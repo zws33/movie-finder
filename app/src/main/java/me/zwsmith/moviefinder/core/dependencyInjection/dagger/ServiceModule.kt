@@ -8,7 +8,6 @@ import javax.inject.Singleton
 
 @Module
 class ServiceModule {
-
     @Provides
     @Singleton
     fun provideMovieService(retrofit: Retrofit): MovieService {

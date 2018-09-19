@@ -6,7 +6,12 @@ import me.zwsmith.moviefinder.presentation.movieDetails.MovieDetailsFragment
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [AppModule::class, ViewModelModule::class, ServiceModule::class, RepositoryModule::class])
+@Component(modules = [
+    AppModule::class,
+    ViewModelModule::class,
+    ServiceModule::class,
+    RepositoryModule::class
+])
 interface Injector {
     fun inject(browserFragment: MovieBrowserFragment)
     fun inject(fragment: MovieDetailsFragment)
