@@ -2,7 +2,7 @@ package me.zwsmith.moviefinder.core.dependencyInjection.dagger
 
 import dagger.Component
 import me.zwsmith.moviefinder.presentation.movieDetails.MovieDetailsFragment
-import me.zwsmith.moviefinder.presentation.movieResults.MovieBrowserFragment
+import me.zwsmith.moviefinder.presentation.movieBrowser.MovieBrowserFragment
 import javax.inject.Singleton
 
 @Singleton

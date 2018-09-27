@@ -1,4 +1,4 @@
-package me.zwsmith.moviefinder.presentation.movieResults
+package me.zwsmith.moviefinder.presentation.movieBrowser
 
 
 import android.view.View

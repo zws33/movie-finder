@@ -6,7 +6,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
 import me.zwsmith.moviefinder.presentation.movieDetails.MovieDetailsViewModel
-import me.zwsmith.moviefinder.presentation.movieResults.MovieResultsViewModel
+import me.zwsmith.moviefinder.presentation.movieBrowser.MovieResultsViewModel
 
 @Module
 abstract class ViewModelModule {

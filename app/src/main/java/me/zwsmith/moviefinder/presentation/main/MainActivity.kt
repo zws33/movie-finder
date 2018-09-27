@@ -3,7 +3,7 @@ package me.zwsmith.moviefinder.presentation.main
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import me.zwsmith.moviefinder.R
-import me.zwsmith.moviefinder.presentation.movieResults.MovieBrowserFragment
+import me.zwsmith.moviefinder.presentation.movieBrowser.MovieBrowserFragment
 
 class MainActivity : AppCompatActivity() {
 
