@@ -15,6 +15,26 @@ buildscript {
     }
 }
 
+plugins {
+    id "io.gitlab.arturbosch.detekt" version "1.0.0.RC8"
+}
+
+detekt {
+    version = "1.0.0.RC8"
+    profile("main") {
+        input = "$projectDir/app/src/main/java"
+        config = "$projectDir/default-detekt-config.yml"
+        filters = ".*test.*,.*/resources/.*,.*/tmp/.*"
+    }
+    idea {
+        path = "/Applications/IntelliJ IDEA.app/Contents"
+        codeStyleScheme = "/Applications/IntelliJ IDEA.app/Contents/idea-code-style.xml"
+        inspectionsProfile = "/Applications/IntelliJ IDEA.app/Contents/inspect.xml"
+        report = "project.projectDir/reports"
+        mask = "*.kt,"
+    }
+}
+
 allprojects {
     repositories {
         google()
