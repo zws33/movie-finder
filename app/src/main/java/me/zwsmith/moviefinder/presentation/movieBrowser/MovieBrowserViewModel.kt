@@ -6,7 +6,7 @@ import me.zwsmith.moviefinder.core.common.ResponseStatus
 import me.zwsmith.moviefinder.core.interactors.GetPopularMoviesInteractor
 import me.zwsmith.moviefinder.core.interactors.RefreshPopularMoviesInteractor
 import me.zwsmith.moviefinder.core.interactors.RequestNextPopularMoviesPageInteractor
-import me.zwsmith.moviefinder.core.services.PopularMoviesResponse
+import me.zwsmith.moviefinder.core.models.MovieResultsResponse
 import javax.inject.Inject
 
 
@@ -30,7 +30,7 @@ class MovieBrowserViewModel @Inject constructor(
         refreshPopularMoviesInteractor.refreshPopularMovies()
     }
 
-    private fun ResponseStatus<PopularMoviesResponse>.toMovieResultsState(): MovieBrowserState {
+    private fun ResponseStatus<MovieResultsResponse>.toMovieResultsState(): MovieBrowserState {
         return when (this) {
             is ResponseStatus.Complete -> {
                 when (this) {
@@ -49,7 +49,7 @@ class MovieBrowserViewModel @Inject constructor(
     }
 
     private fun handleSuccess(
-            responseStatus: ResponseStatus.Complete.Success<PopularMoviesResponse>
+            responseStatus: ResponseStatus.Complete.Success<MovieResultsResponse>
     ): MovieBrowserState.Success {
         val response = responseStatus.value
         val movieList = response.popularMovies.map { popularMovie ->
