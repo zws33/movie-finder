@@ -17,6 +17,6 @@ sealed class MovieBrowserState {
 data class MovieBrowserItem(
         val id: String,
         val title: String,
-        val popularity: Double,
+        val averageRating: Double,
         val posterPath: String?
 )

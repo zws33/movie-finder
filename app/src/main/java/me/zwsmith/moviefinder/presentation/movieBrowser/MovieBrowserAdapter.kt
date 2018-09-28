@@ -58,7 +58,7 @@ class MovieBrowserAdapter(
                     .into(view.poster_icon)
 
             view.title_tv.text = viewState.title
-            view.popularity_tv.text = viewState.popularity
+            view.director_tv.text = viewState.averageRating
         }
     }
 }

@@ -56,7 +56,7 @@ class MovieBrowserViewModel @Inject constructor(
             MovieBrowserItem(
                     popularMovie.id.toString(),
                     popularMovie.title,
-                    popularMovie.popularity,
+                    popularMovie.voteAverage,
                     popularMovie.posterPath
             )
         }
@@ -93,14 +93,15 @@ class MovieBrowserViewModel @Inject constructor(
         return MovieItemViewState(
                 id,
                 title,
-                popularity.toString(),
+                averageRating.toString(),
                 posterPath?.let { IMAGE_BASE_URL + it }
         )
     }
 
     companion object {
         private val TAG = MovieBrowserViewModel::class.java.simpleName
-        private const val IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w45"
+        private const val IMAGE_SIZE = "w154"
+        private const val IMAGE_BASE_URL = "https://image.tmdb.org/t/p/$IMAGE_SIZE"
     }
 }
 
@@ -113,6 +114,6 @@ data class MovieBrowserViewState(
 data class MovieItemViewState(
         val id: String,
         val title: String,
-        val popularity: String,
+        val averageRating: String,
         val imageUrl: String?
 )
