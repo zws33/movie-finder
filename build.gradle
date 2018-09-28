@@ -27,9 +27,9 @@ detekt {
         filters = ".*test.*,.*/resources/.*,.*/tmp/.*"
     }
     idea {
-        path = "/Applications/IntelliJ IDEA.app/Contents"
-        codeStyleScheme = "/Applications/IntelliJ IDEA.app/Contents/idea-code-style.xml"
-        inspectionsProfile = "/Applications/IntelliJ IDEA.app/Contents/inspect.xml"
+        path = "/Users/zacharysmith/Library/Preferences/AndroidStudio3.2"
+        codeStyleScheme = "/Users/zacharysmith/Library/Preferences/AndroidStudio3.2/codestyles/SquareAndroid.xml"
+        inspectionsProfile = "/Users/zacharysmith/Library/Preferences/AndroidStudio3.2/inspection/Default.xml"
         report = "project.projectDir/reports"
         mask = "*.kt,"
     }
