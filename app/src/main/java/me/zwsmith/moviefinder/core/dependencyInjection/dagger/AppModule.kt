@@ -9,6 +9,7 @@ import dagger.Provides
 import me.zwsmith.moviefinder.MovieFinderApplication
 import me.zwsmith.moviefinder.core.common.ApiKeyInterceptor
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
@@ -17,12 +18,6 @@ import javax.inject.Singleton
 
 @Module
 class AppModule(private val application: MovieFinderApplication) {
-    @Provides
-    @Singleton
-    fun provideApplication(): MovieFinderApplication {
-        return application
-    }
-
     @Provides
     @Singleton
     fun provideContext(): Context = application.applicationContext
@@ -55,8 +50,12 @@ class AppModule(private val application: MovieFinderApplication) {
     @Provides
     @Singleton
     fun provideOkHttpClient(apiKeyInterceptor: ApiKeyInterceptor): OkHttpClient {
+        val loggingInterceptor =
+                HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC)
+
         return OkHttpClient.Builder()
                 .addInterceptor(apiKeyInterceptor)
+                .addInterceptor(loggingInterceptor)
                 .build()
     }
 
