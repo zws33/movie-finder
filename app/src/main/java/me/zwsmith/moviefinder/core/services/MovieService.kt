@@ -9,6 +9,6 @@ interface MovieService {
     fun getMovieDetailsById(id: String): MovieDetailsResponse
 
     companion object {
-        private val TAG = RxMovieService::class.java.simpleName
+        private val TAG = MovieService::class.java.simpleName
     }
 }
