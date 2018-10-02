@@ -2,7 +2,7 @@ package me.zwsmith.moviefinder.core.dependencyInjection.dagger
 
 import dagger.Module
 import dagger.Provides
-import me.zwsmith.moviefinder.core.services.MovieService
+import me.zwsmith.moviefinder.core.services.RxMovieService
 import retrofit2.Retrofit
 import javax.inject.Singleton
 
@@ -10,7 +10,7 @@ import javax.inject.Singleton
 class ServiceModule {
     @Provides
     @Singleton
-    fun provideMovieService(retrofit: Retrofit): MovieService {
-        return retrofit.create(MovieService::class.java)
+    fun provideMovieService(retrofit: Retrofit): RxMovieService {
+        return retrofit.create(RxMovieService::class.java)
     }
 }
