@@ -5,7 +5,7 @@ import com.google.gson.Gson
 import com.jakewharton.rxrelay2.BehaviorRelay
 import io.reactivex.Single
 import me.zwsmith.moviefinder.core.models.MovieDetailsResponse
-import me.zwsmith.moviefinder.core.models.MovieResultsResponse
+import me.zwsmith.moviefinder.core.models.MovieListResponse
 import okhttp3.*
 import java.io.IOException
 import javax.inject.Inject
@@ -21,8 +21,8 @@ class MovieSericeImpl @Inject constructor(
             .addQueryParameter("language", "en-US")
             .addQueryParameter("sort_by", "popularity.desc")
 
-    override fun getPopularMovies(pageNumber: Int): Single<MovieResultsResponse> {
-        val popularMovieRelay = BehaviorRelay.create<MovieResultsResponse>()
+    override fun getPopularMovies(pageNumber: Int): Single<MovieListResponse> {
+        val popularMovieRelay = BehaviorRelay.create<MovieListResponse>()
 
         val url = popularMoviesUrlBuilder
                 .addQueryParameter("page", pageNumber.toString())
@@ -42,7 +42,7 @@ class MovieSericeImpl @Inject constructor(
             override fun onResponse(call: Call, response: Response) {
                 val movieResultsResponse = gson.fromJson(
                         response.body()?.charStream(),
-                        MovieResultsResponse::class.java
+                        MovieListResponse::class.java
                 )
                 Log.d(TAG, movieResultsResponse.toString())
                 popularMovieRelay.accept(movieResultsResponse)

@@ -2,10 +2,10 @@ package me.zwsmith.moviefinder.core.models
 
 import com.google.gson.annotations.SerializedName
 
-data class MovieResultsResponse(
+data class MovieListResponse(
         val page: Int,
         @SerializedName("results")
-        val popularMovies: List<Movie>,
+        val movies: List<Movie>,
         @SerializedName("total_results")
         val totalResults: Int,
         @SerializedName("total_pages")

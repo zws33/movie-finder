@@ -4,7 +4,7 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import me.zwsmith.moviefinder.core.common.ResponseStatus
 import me.zwsmith.moviefinder.core.models.MovieDetailsResponse
-import me.zwsmith.moviefinder.core.models.MovieResultsResponse
+import me.zwsmith.moviefinder.core.models.MovieListResponse
 import me.zwsmith.moviefinder.core.repositories.MovieRepository
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -13,7 +13,7 @@ import javax.inject.Singleton
 class GetPopularMoviesInteractor @Inject constructor(
         private val movieRepository: MovieRepository
 ) {
-    val popularMoviesStream: Observable<ResponseStatus<MovieResultsResponse>> =
+    val popularMoviesStream: Observable<ResponseStatus<MovieListResponse>> =
             movieRepository.popularMoviesStream
 }
 

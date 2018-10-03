@@ -8,7 +8,7 @@ import io.reactivex.rxkotlin.subscribeBy
 import me.zwsmith.moviefinder.core.common.ResponseStatus
 import me.zwsmith.moviefinder.core.common.wrapResponse
 import me.zwsmith.moviefinder.core.models.MovieDetailsResponse
-import me.zwsmith.moviefinder.core.models.MovieResultsResponse
+import me.zwsmith.moviefinder.core.models.MovieListResponse
 import me.zwsmith.moviefinder.core.services.RxMovieService
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -18,9 +18,9 @@ class MovieRepositoryImpl @Inject constructor(
         private val movieService: RxMovieService
 ) : MovieRepository {
 
-    private val popularMoviesRelay = BehaviorRelay.create<ResponseStatus<MovieResultsResponse>>()
+    private val popularMoviesRelay = BehaviorRelay.create<ResponseStatus<MovieListResponse>>()
 
-    override val popularMoviesStream: Observable<ResponseStatus<MovieResultsResponse>> = popularMoviesRelay
+    override val popularMoviesStream: Observable<ResponseStatus<MovieListResponse>> = popularMoviesRelay
 
     private var currentPopularPage = INITIAL_POPULAR_MOVIES_PAGE
 
@@ -61,7 +61,7 @@ class MovieRepositoryImpl @Inject constructor(
 }
 
 interface MovieRepository {
-    val popularMoviesStream: Observable<ResponseStatus<MovieResultsResponse>>
+    val popularMoviesStream: Observable<ResponseStatus<MovieListResponse>>
     fun refreshPopularMovies()
     fun loadNextPopularMoviesPage()
     fun getMovieDetailsById(id: String): Single<ResponseStatus<MovieDetailsResponse>>

@@ -1,18 +1,16 @@
 package me.zwsmith.moviefinder.core.dependencyInjection.dagger
 
-import com.google.gson.Gson
 import dagger.Module
 import dagger.Provides
-import me.zwsmith.moviefinder.core.services.MovieSericeImpl
 import me.zwsmith.moviefinder.core.services.RxMovieService
-import okhttp3.OkHttpClient
+import retrofit2.Retrofit
 import javax.inject.Singleton
 
 @Module
 class ServiceModule {
     @Provides
     @Singleton
-    fun provideMovieService(okHttpClient: OkHttpClient, gson: Gson): RxMovieService {
-        return MovieSericeImpl(okHttpClient, gson)
+    fun provideRxMovieService(retrofit: Retrofit): RxMovieService {
+        return retrofit.create(RxMovieService::class.java)
     }
 }
