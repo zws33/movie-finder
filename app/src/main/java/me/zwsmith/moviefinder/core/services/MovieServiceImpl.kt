@@ -31,9 +31,7 @@ class MovieServiceImpl @Inject constructor(
 
     override fun getPopularMovies(pageNumber: Int): MovieListResponse {
 
-        val url: HttpUrl = popularMoviesUrlBuilder
-                .addQueryParameter("page", pageNumber.toString())
-                .build()
+        val url: HttpUrl = buildPopularMoviesUrl(pageNumber)
                 .also { logger.d(TAG, "Popular movies url = $it") }
 
         val request = Request.Builder().url(url).build()
@@ -45,9 +43,7 @@ class MovieServiceImpl @Inject constructor(
     }
 
     override fun getMovieDetailsById(id: String): MovieDetailsResponse {
-        val url = movieDetailsUrlBuilder
-                .addPathSegment(id)
-                .build()
+        val url = buildMoveDetailsUrl(id)
                 .also { logger.d(TAG, "Movie details url = $it") }
 
         val request = Request.Builder().url(url).build()
@@ -58,6 +54,17 @@ class MovieServiceImpl @Inject constructor(
         return gson.fromJson(responseBody.charStream(), MovieDetailsResponse::class.java)
     }
 
+    fun buildMoveDetailsUrl(id: String): HttpUrl {
+        return movieDetailsUrlBuilder
+                .addPathSegment(id)
+                .build()
+    }
+
+    fun buildPopularMoviesUrl(pageNumber: Int): HttpUrl {
+        return popularMoviesUrlBuilder
+                .addQueryParameter("page", pageNumber.toString())
+                .build()
+    }
     companion object {
         private val TAG = MovieServiceImpl::class.java.simpleName
         private const val HOST = "api.themoviedb.org"
