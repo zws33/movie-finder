@@ -8,6 +8,7 @@ import dagger.Module
 import dagger.Provides
 import me.zwsmith.moviefinder.MovieFinderApplication
 import me.zwsmith.moviefinder.core.common.ApiKeyInterceptor
+import me.zwsmith.moviefinder.core.common.Logger
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -29,6 +30,10 @@ class AppModule(private val application: MovieFinderApplication) {
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create()
     }
+
+    @Provides
+    @Singleton
+    fun provideLogger(logger: Logger): Logger = logger
 
     @Provides
     @Singleton

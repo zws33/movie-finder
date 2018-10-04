@@ -106,12 +106,6 @@ dependencies {
     implementation "joda-time:joda-time:2.9.9"
 
     testImplementation 'junit:junit:4.12'
-    testImplementation('io.kotlintest:kotlintest:2.0.4', {
-        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib'
-    })
     testImplementation 'org.mockito:mockito-inline:2.7.8'
-    testImplementation('com.nhaarman:mockito-kotlin:1.4.0', {
-        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib'
-    })
-    testImplementation 'org.amshove.kluent:kluent:1.31'
+    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.0.0-RC2"
 }
