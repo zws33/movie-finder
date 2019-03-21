@@ -54,7 +54,9 @@ class MovieBrowserViewModelFactory constructor(
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(MovieBrowserViewModel::class.java)) {
             return movieBrowserViewModel as T
-        } else throw IllegalArgumentException("Unknown ViewModel class")
+        } else {
+            throw IllegalArgumentException("Unknown ViewModel class")
+        }
     }
 }
 
