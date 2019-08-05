@@ -1,9 +1,6 @@
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
-
 apply plugin: 'kotlin-android-extensions'
-
 apply plugin: 'kotlin-kapt'
 
 def localPropertiesFile = rootProject.file("local.properties")
@@ -25,7 +22,7 @@ android {
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField 'boolean', "KOIN_ENABLED", featureToggles.getProperty("KOIN_ENABLED")
     }
     buildTypes {
@@ -38,15 +35,19 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    sourceSets {
+        getByName("main").java.srcDirs("src/main/kotlin")
+        getByName("androidTest").java.srcDirs("src/androidTest/kotlin")
+        getByName("test").java.srcDirs("src/test/kotlin")
+    }
 }
 
 ext {
-    support_version = "28.0.0-rc02"
+    support_version = "28.0.0"
     constraint_layout_version = "1.1.3"
-    lifecycle_version = "1.1.1"
-    retrofit_version = "2.4.0"
+    lifecycle_version = "2.1.0-rc01"
+    retrofit_version = "2.6.1"
     gson_version = "2.8.5"
-    dagger_version = "2.15"
     rx_java_version = "2.1.14"
     rx_android_version = "2.0.2"
     rx_relay_version = "2.0.0"
@@ -60,18 +61,20 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     //UI
-    implementation "com.android.support:appcompat-v7:$support_version"
-    implementation "com.android.support:support-v4:$support_version"
-    implementation "com.android.support:support-media-compat:$support_version"
-    implementation "com.android.support:recyclerview-v7:$support_version"
-    implementation "com.android.support.constraint:constraint-layout:$constraint_layout_version"
-    implementation('com.squareup.picasso:picasso:2.71828', {
-        exclude group: 'com.android.support', module: 'exifinterface'
-    })
+    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.media:media:1.0.1'
+    implementation 'androidx.core:core-ktx:1.0.2'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'com.squareup.picasso:picasso:2.71828'
+
     // ViewModel and LiveData
-    implementation "android.arch.lifecycle:extensions:$lifecycle_version"
-    implementation "android.arch.lifecycle:runtime:$lifecycle_version"
-    kapt "android.arch.lifecycle:compiler:$lifecycle_version"
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime:2.0.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0'
+    kapt 'androidx.lifecycle:lifecycle-compiler:2.0.0'
 
     //Network
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
@@ -94,6 +97,7 @@ dependencies {
     implementation "joda-time:joda-time:2.9.9"
 
     testImplementation 'junit:junit:4.12'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.5.1'
     testImplementation('io.kotlintest:kotlintest:2.0.4', {
         exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib'
     })
@@ -102,4 +106,6 @@ dependencies {
         exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib'
     })
     testImplementation 'org.amshove.kluent:kluent:1.31'
+    androidTestImplementation 'androidx.test:core:1.2.1-alpha02'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
 }
