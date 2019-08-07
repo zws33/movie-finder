@@ -1,92 +1,52 @@
 package me.zwsmith.moviefinder.presentation.movieBrowser
 
+import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import io.reactivex.Observable
-import me.zwsmith.moviefinder.core.common.ResponseStatus
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import me.zwsmith.moviefinder.core.models.extensions.MovieListItem
 import me.zwsmith.moviefinder.core.repositories.MovieRepository
-import me.zwsmith.moviefinder.core.services.PopularMoviesResponse
 
 class MovieBrowserViewModel(private val movieRepository: MovieRepository) : ViewModel() {
 
-    val viewStateStream: Observable<MovieBrowserViewState> =
-            movieRepository.popularMoviesStream
-                    .map { responseStatus -> responseStatus.toMovieResultsState() }
-                    .map { state -> state.toMovieBrowserViewState() }
-                    .doOnSubscribe { refreshPopularMovies() }
+    private val _viewStates = MutableLiveData<MovieBrowserViewState>()
+    val viewStates: LiveData<MovieBrowserViewState> = _viewStates
 
-    fun loadNextPage() {
-        movieRepository.loadNextPopularMoviesPage()
-    }
+    private val _movieSelection = MutableLiveData<String>()
+    val movieSelection: LiveData<String> = _movieSelection
 
-    private fun refreshPopularMovies() {
-        movieRepository.refreshPopularMovies()
-    }
-
-    private fun ResponseStatus<PopularMoviesResponse>.toMovieResultsState(): MovieBrowserState {
-        return when (this) {
-            is ResponseStatus.Complete -> {
-                when (this) {
-                    is ResponseStatus.Complete.Success -> {
-                        handleSuccess(this)
-                    }
-                    is ResponseStatus.Complete.Error -> {
-                        MovieBrowserState.Error
-                    }
+    fun loadMovies() {
+        viewModelScope.launch {
+            try {
+                val viewState = withContext(Dispatchers.IO) {
+                    MovieBrowserViewState(
+                        isLoadingVisible = false,
+                        isErrorVisible = false,
+                        moviesList = movieRepository.getPopularMovies(1)
+                            .map {
+                                Log.d(TAG, it.toString())
+                                it.toMovieRowViewState()
+                            }
+                    )
                 }
-            }
-            ResponseStatus.Pending -> {
-                MovieBrowserState.Loading
-            }
-        }
-    }
-
-    private fun handleSuccess(
-            responseStatus: ResponseStatus.Complete.Success<PopularMoviesResponse>
-    ): MovieBrowserState.Success {
-        val response = responseStatus.value
-        val movieList = response.popularMovies.map { popularMovie ->
-            MovieBrowserItem(
-                    popularMovie.id.toString(),
-                    popularMovie.title,
-                    popularMovie.popularity,
-                    popularMovie.posterPath
-            )
-        }
-        return MovieBrowserState.Success(movieList)
-    }
-
-    private fun MovieBrowserState.toMovieBrowserViewState(): MovieBrowserViewState {
-        return when (this) {
-            is MovieBrowserState.Success -> {
-                MovieBrowserViewState(
-                        isLoadingVisible = false,
-                        isErrorVisible = false,
-                        movieResults = movies.map { movie -> movie.toMovieItemViewState() }
-                )
-            }
-            MovieBrowserState.Loading -> {
-                MovieBrowserViewState(
-                        isLoadingVisible = true,
-                        isErrorVisible = false,
-                        movieResults = null
-                )
-            }
-            MovieBrowserState.Error -> {
-                MovieBrowserViewState(
-                        isLoadingVisible = false,
-                        isErrorVisible = true,
-                        movieResults = null
-                )
+                _viewStates.postValue(viewState)
+            } catch (exception: Exception) {
+                throw exception
             }
         }
     }
 
-    private fun MovieBrowserItem.toMovieItemViewState(): MovieItemViewState {
-        return MovieItemViewState(
-                id,
-                title,
-                popularity.toString(),
-                posterPath?.let { IMAGE_BASE_URL + it }
+    private fun MovieListItem.toMovieRowViewState(): MovieBrowserViewState.RowViewState {
+        return MovieBrowserViewState.RowViewState(
+            id,
+            title,
+            popularity.toString(),
+            posterPath?.let { IMAGE_BASE_URL + it },
+            onClick = { _movieSelection.postValue(id) }
         )
     }
 
@@ -97,14 +57,16 @@ class MovieBrowserViewModel(private val movieRepository: MovieRepository) : View
 }
 
 data class MovieBrowserViewState(
-        val isLoadingVisible: Boolean,
-        val isErrorVisible: Boolean,
-        val movieResults: List<MovieItemViewState>?
-)
-
-data class MovieItemViewState(
+    val isLoadingVisible: Boolean,
+    val isErrorVisible: Boolean,
+    val moviesList: List<RowViewState>?
+) {
+    data class RowViewState(
         val id: String,
         val title: String,
         val popularity: String,
-        val imageUrl: String?
-)
+        val imageUrl: String?,
+        val onClick: () -> Unit
+    )
+}
+

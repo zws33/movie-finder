@@ -1,4 +1,4 @@
-package me.zwsmith.moviefinder.core.services
+package me.zwsmith.moviefinder.core.models
 
 import com.google.gson.annotations.SerializedName
 
