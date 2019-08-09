@@ -7,66 +7,43 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.squareup.picasso.Picasso
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.subscribeBy
-import kotlinx.android.synthetic.main.fragment_movie_details.view.*
+import kotlinx.android.synthetic.main.fragment_movie_details.*
 import me.zwsmith.moviefinder.R
-import me.zwsmith.moviefinder.core.dependencyInjection.dagger.ViewModelFactory
-import me.zwsmith.moviefinder.presentation.extensions.getInjector
-import me.zwsmith.moviefinder.presentation.extensions.getViewModel
-import javax.inject.Inject
+import me.zwsmith.moviefinder.presentation.extensions.observe
+import org.koin.android.ext.android.inject
 
 class MovieDetailsFragment : Fragment() {
-
-    private lateinit var viewModel: MovieDetailsViewModel
-    private var compositeDisposable = CompositeDisposable()
-
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        getInjector().inject(this)
-        viewModel = getViewModel(viewModelFactory)
-    }
+    private val viewModel: MovieDetailsViewModel by inject()
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         return inflater.inflate(R.layout.fragment_movie_details, container, false)
     }
 
     override fun onStart() {
         super.onStart()
-        arguments?.getString(MOVIE_ID, null)?.let {
-            compositeDisposable.add(
-                    viewModel.getMovieDetailsViewState(it)
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribeBy(
-                                    onSuccess = { movieDetailsViewState ->
-                                        view?.update(movieDetailsViewState)
-                                    },
-                                    onError = { e -> Log.e(TAG, e.message, e) }
-                            )
-            )
+        observe(viewModel.viewStates) {
+            updateView(it)
         }
-                ?: Log.e(
-                        TAG,
-                        "Movie details fragment instantiated without movie id.",
-                        IllegalStateException("Movie details fragment instantiated without movie id.")
-                )
+        arguments?.getString(MOVIE_ID, null)?.let {
+            viewModel.loadMovieDetails(it)
+        } ?: Log.e(
+            TAG,
+            "Movie details fragment instantiated without movie id.",
+            IllegalStateException("Movie details fragment instantiated without movie id.")
+        )
     }
 
-    private fun View.update(viewState: MovieDetailsViewState) {
+    private fun updateView(viewState: MovieDetailsViewState) {
         title.text = viewState.title
         overview.text = viewState.overview
         Picasso.get()
-                .load(viewState.backdropUrl)
-                .placeholder(R.drawable.ic_action_movie)
-                .into(backdrop)
+            .load(viewState.backdropUrl)
+            .placeholder(R.drawable.ic_action_movie)
+            .into(backdrop)
     }
 
     companion object {

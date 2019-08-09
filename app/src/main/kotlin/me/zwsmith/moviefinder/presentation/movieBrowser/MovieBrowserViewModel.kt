@@ -1,119 +1,70 @@
 package me.zwsmith.moviefinder.presentation.movieBrowser
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import io.reactivex.Observable
-import me.zwsmith.moviefinder.core.common.ResponseStatus
-import me.zwsmith.moviefinder.core.interactors.GetPopularMoviesInteractor
-import me.zwsmith.moviefinder.core.interactors.RefreshPopularMoviesInteractor
-import me.zwsmith.moviefinder.core.interactors.RequestNextPopularMoviesPageInteractor
-import me.zwsmith.moviefinder.core.models.MovieResultsResponse
-import javax.inject.Inject
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import me.zwsmith.moviefinder.core.models.extensions.MovieListItem
+import me.zwsmith.moviefinder.core.repositories.MovieRepository
+import me.zwsmith.moviefinder.core.services.Genre
 
+class MovieBrowserViewModel(private val movieRepository: MovieRepository) : ViewModel() {
 
-class MovieBrowserViewModel @Inject constructor(
-        private val refreshPopularMoviesInteractor: RefreshPopularMoviesInteractor,
-        private val getPopularMoviesInteractor: GetPopularMoviesInteractor,
-        private val requestNextPopularMoviesPageInteractor: RequestNextPopularMoviesPageInteractor
-) : ViewModel() {
+    private val _viewStates = MutableLiveData<MovieBrowserViewState>()
+    val viewStates: LiveData<MovieBrowserViewState> = _viewStates
 
-    val viewStateStream: Observable<MovieBrowserViewState> =
-            getPopularMoviesInteractor.popularMoviesStream
-                    .map { responseStatus -> responseStatus.toMovieResultsState() }
-                    .map { state -> state.toMovieBrowserViewState() }
-                    .doOnSubscribe { refreshPopularMovies() }
+    private val _movieSelection = MutableLiveData<String>()
+    val movieSelection: LiveData<String> = _movieSelection
 
-    fun loadNextPage() {
-        requestNextPopularMoviesPageInteractor.requestNextPage()
-    }
-
-    private fun refreshPopularMovies() {
-        refreshPopularMoviesInteractor.refreshPopularMovies()
-    }
-
-    private fun ResponseStatus<MovieResultsResponse>.toMovieResultsState(): MovieBrowserState {
-        return when (this) {
-            is ResponseStatus.Complete -> {
-                when (this) {
-                    is ResponseStatus.Complete.Success -> {
-                        handleSuccess(this)
+    fun loadMovies() {
+        viewModelScope.launch {
+            val viewState = withContext(Dispatchers.Default) {
+                val genres = movieRepository.getGenres()
+                val popularMovies = movieRepository.getPopularMovies(1)
+                MovieBrowserViewState(
+                    isLoadingVisible = false,
+                    isErrorVisible = false,
+                    moviesList = popularMovies.map {
+                        buildMovieRowViewState(it, genres)
                     }
-                    is ResponseStatus.Complete.Error -> {
-                        MovieBrowserState.Error
-                    }
-                }
+                )
             }
-            ResponseStatus.Pending -> {
-                MovieBrowserState.Loading
-            }
+            _viewStates.postValue(viewState)
         }
     }
 
-    private fun handleSuccess(
-            responseStatus: ResponseStatus.Complete.Success<MovieResultsResponse>
-    ): MovieBrowserState.Success {
-        val response = responseStatus.value
-        val movieList = response.popularMovies.map { popularMovie ->
-            MovieBrowserItem(
-                    popularMovie.id.toString(),
-                    popularMovie.title,
-                    popularMovie.voteAverage,
-                    popularMovie.posterPath
-            )
-        }
-        return MovieBrowserState.Success(movieList)
-    }
-
-    private fun MovieBrowserState.toMovieBrowserViewState(): MovieBrowserViewState {
-        return when (this) {
-            is MovieBrowserState.Success -> {
-                MovieBrowserViewState(
-                        isLoadingVisible = false,
-                        isErrorVisible = false,
-                        movieResults = movies.map { movie -> movie.toMovieItemViewState() }
-                )
-            }
-            MovieBrowserState.Loading -> {
-                MovieBrowserViewState(
-                        isLoadingVisible = true,
-                        isErrorVisible = false,
-                        movieResults = null
-                )
-            }
-            MovieBrowserState.Error -> {
-                MovieBrowserViewState(
-                        isLoadingVisible = false,
-                        isErrorVisible = true,
-                        movieResults = null
-                )
-            }
-        }
-    }
-
-    private fun MovieBrowserItem.toMovieItemViewState(): MovieItemViewState {
-        return MovieItemViewState(
-                id,
-                title,
-                averageRating.toString(),
-                posterPath?.let { IMAGE_BASE_URL + it }
+    private fun buildMovieRowViewState(movieListItem: MovieListItem, genres: List<Genre>): MovieBrowserViewState.RowViewState {
+        return MovieBrowserViewState.RowViewState(
+            movieListItem.id,
+            movieListItem.title,
+            movieListItem.rating.toString(),
+            movieListItem.genreIds.map { genreId -> genres.first { it.id == genreId }.name },
+            movieListItem.posterPath?.let { IMAGE_BASE_URL + it },
+            onClick = { _movieSelection.postValue(movieListItem.id) }
         )
     }
 
     companion object {
         private val TAG = MovieBrowserViewModel::class.java.simpleName
-        private const val IMAGE_SIZE = "w154"
-        private const val IMAGE_BASE_URL = "https://image.tmdb.org/t/p/$IMAGE_SIZE"
+        private const val IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w45"
     }
 }
 
 data class MovieBrowserViewState(
-        val isLoadingVisible: Boolean,
-        val isErrorVisible: Boolean,
-        val movieResults: List<MovieItemViewState>?
-)
-
-data class MovieItemViewState(
+    val isLoadingVisible: Boolean,
+    val isErrorVisible: Boolean,
+    val moviesList: List<RowViewState>?
+) {
+    data class RowViewState(
         val id: String,
         val title: String,
-        val averageRating: String,
-        val imageUrl: String?
-)
+        val rating: String,
+        val genres: List<String>,
+        val imageUrl: String?,
+        val onClick: () -> Unit
+    )
+}
+

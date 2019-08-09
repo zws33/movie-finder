@@ -1,9 +1,6 @@
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
-
 apply plugin: 'kotlin-android-extensions'
-
 apply plugin: 'kotlin-kapt'
 
 def localPropertiesFile = rootProject.file("local.properties")
@@ -22,7 +19,7 @@ android {
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         debug {
@@ -34,9 +31,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    configurations.all {
-        resolutionStrategy.force("androidx.legacy:legacy-support-v4:1.0.0-rc02")
-    }
     sourceSets {
         getByName("main").java.srcDirs("src/main/kotlin")
         getByName("androidTest").java.srcDirs("src/androidTest/kotlin")
@@ -45,16 +39,17 @@ android {
 }
 
 ext {
-    support_version = "1.0.0"
+    support_version = "28.0.0"
     constraint_layout_version = "1.1.3"
-    lifecycle_version = "2.0.0"
-    retrofit_version = "2.4.0"
+    lifecycle_version = "2.2.0-alpha02"
+    retrofit_version = "2.6.1"
     gson_version = "2.8.5"
-    dagger_version = "2.15"
     rx_java_version = "2.1.14"
     rx_android_version = "2.0.2"
     rx_relay_version = "2.0.0"
     rx_kotlin_version = "2.2.0"
+    coroutines_version = "1.3.0-RC"
+    koin_version = '2.0.1'
 }
 
 dependencies {
@@ -64,49 +59,50 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     //UI
-    implementation "androidx.appcompat:appcompat:1.0.2"
-    implementation "androidx.legacy:legacy-support-v4:1.0.0"
-    implementation "androidx.media:media:1.0.1"
-    implementation "androidx.recyclerview:recyclerview:1.1.0-beta01"
-    implementation "androidx.constraintlayout:constraintlayout:2.0.0-beta2"
-    implementation "androidx.constraintlayout:constraintlayout-solver:2.0.0-beta2"
-    implementation "androidx.cardview:cardview:1.0.0"
-
-    //Image loading
-    implementation('com.squareup.picasso:picasso:2.71828', {
-        exclude group: 'com.android.support', module: 'exifinterface'
-    })
+    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.media:media:1.0.1'
+    implementation 'androidx.core:core-ktx:1.0.2'
+    implementation "androidx.fragment:fragment-ktx:1.2.0-alpha01"
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'com.squareup.picasso:picasso:2.71828'
 
     // ViewModel and LiveData
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-runtime:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     kapt "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
 
     //Network
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
     implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofit_version"
-    implementation "com.squareup.okhttp3:logging-interceptor:3.11.0"
+    implementation "com.squareup.okhttp3:logging-interceptor:4.0.1"
 
     //Serialization
     implementation "com.google.code.gson:gson:$gson_version"
 
-    //Dependency Injection
-    implementation "com.google.dagger:dagger:$dagger_version"
-    implementation ("com.google.dagger:dagger-android-support:$dagger_version", {
-        exclude group:'com.android.support'
-    })
-    kapt "com.google.dagger:dagger-compiler:$dagger_version"
+    //Dependency Injection - Koin
+    implementation "org.koin:koin-android:$koin_version"
+    implementation "org.koin:koin-androidx-viewmodel:$koin_version"
+
+    //Coroutines
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
 
     //Rx
-    implementation "io.reactivex.rxjava2:rxjava:$rx_java_version"
-    implementation "io.reactivex.rxjava2:rxandroid:$rx_android_version"
-    implementation "com.jakewharton.rxrelay2:rxrelay:$rx_relay_version"
-    implementation "io.reactivex.rxjava2:rxkotlin:$rx_kotlin_version"
+    implementation "io.reactivex.rxjava2:rxjava:2.1.14"
+    implementation "io.reactivex.rxjava2:rxandroid:2.0.2"
+    implementation "com.jakewharton.rxrelay2:rxrelay:2.0.0"
+    implementation "io.reactivex.rxjava2:rxkotlin:2.2.0"
 
     implementation "joda-time:joda-time:2.9.9"
 
     testImplementation 'junit:junit:4.12'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.5.1'
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
     testImplementation('io.kotlintest:kotlintest:2.0.4', {
         exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib'
     })
@@ -115,7 +111,6 @@ dependencies {
         exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib'
     })
     testImplementation 'org.amshove.kluent:kluent:1.31'
-
     androidTestImplementation 'androidx.test:core:1.2.1-alpha02'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
 }
