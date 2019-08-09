@@ -1,32 +1,25 @@
 package me.zwsmith.moviefinder.core.repositories
 
-import android.util.Log
 import me.zwsmith.moviefinder.core.models.extensions.MovieDetails
 import me.zwsmith.moviefinder.core.models.extensions.MovieListItem
 import me.zwsmith.moviefinder.core.models.extensions.toMoveDetails
 import me.zwsmith.moviefinder.core.models.extensions.toMovieListItem
+import me.zwsmith.moviefinder.core.services.Genre
 import me.zwsmith.moviefinder.core.services.MovieService
 
 class MovieRepositoryImpl(private val movieService: MovieService) : MovieRepository {
     override suspend fun getPopularMovies(page: Int): List<MovieListItem> {
-        val response = try {
-            movieService.getPopularMovies(page).also { Log.d(TAG, "PopularResponse = $it") }
-        } catch (exception: Exception) {
-            throw exception
-        }
-        val moviesList = response.body()?.popularMovies?.map { it.toMovieListItem() }
-        return moviesList.also { Log.d(TAG, "MoviesList = ${it?.joinToString(",\n")}") }
-            ?: throw IllegalStateException("Response.body() was null")
+
+        return movieService.getPopularMovies(page).popularMovies.map { it.toMovieListItem() }
     }
 
     override suspend fun getMovieDetailsById(id: String): MovieDetails {
-        val response = try {
-            movieService.getMovieDetailsById(id)
-        } catch (exception: Exception) {
-            throw exception
-        }
-        return response.body()?.toMoveDetails()
-            ?: throw IllegalStateException("Response.body() was null")
+
+        return movieService.getMovieDetailsById(id).toMoveDetails()
+    }
+
+    override suspend fun getGenres(): List<Genre> {
+        return movieService.getGenres().genres
     }
 
     companion object {
@@ -37,4 +30,5 @@ class MovieRepositoryImpl(private val movieService: MovieService) : MovieReposit
 interface MovieRepository {
     suspend fun getPopularMovies(page: Int): List<MovieListItem>
     suspend fun getMovieDetailsById(id: String): MovieDetails
+    suspend fun getGenres(): List<Genre>
 }

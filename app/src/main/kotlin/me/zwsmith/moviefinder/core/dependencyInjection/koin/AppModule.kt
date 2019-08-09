@@ -1,8 +1,10 @@
 package me.zwsmith.moviefinder.core.dependencyInjection.koin
 
+import android.content.Context
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.squareup.picasso.Picasso
 import me.zwsmith.moviefinder.BuildConfig
 import me.zwsmith.moviefinder.core.common.ApiKeyInterceptor
 import okhttp3.OkHttpClient
@@ -16,6 +18,7 @@ val appModule = module {
     single { provideApiKeyInterceptor() }
     single { provideOkHttpClient(apiKeyInterceptor = get()) }
     single { provideRetroFitInstance(gson = get(), okHttpClient = get()) }
+    single { providePicasso(appContext = get()) }
 }
 
 private fun provideRetroFitInstance(gson: Gson, okHttpClient: OkHttpClient): Retrofit {
@@ -47,5 +50,8 @@ private fun provideOkHttpClient(apiKeyInterceptor: ApiKeyInterceptor): OkHttpCli
 private fun provideGson(): Gson = GsonBuilder()
     .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
     .create()
+
+private fun providePicasso(appContext: Context): Picasso =
+    Picasso.Builder(appContext).loggingEnabled(true).build()
 
 private const val BASE_URL = "https://api.themoviedb.org/3/"

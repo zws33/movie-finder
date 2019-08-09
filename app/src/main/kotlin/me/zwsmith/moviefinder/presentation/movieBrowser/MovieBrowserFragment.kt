@@ -7,16 +7,19 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_movie_browser.*
 import me.zwsmith.moviefinder.R
 import me.zwsmith.moviefinder.presentation.extensions.isVisible
 import me.zwsmith.moviefinder.presentation.extensions.observe
 import me.zwsmith.moviefinder.presentation.movieDetails.MovieDetailsFragment
+import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class MovieBrowserFragment : Fragment() {
 
     private val viewModel: MovieBrowserViewModel by viewModel()
+    private val picasso: Picasso by inject()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -26,7 +29,7 @@ class MovieBrowserFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_movie_browser, container, false)
     }
 
-    private val movieBrowserAdapter = MovieBrowserAdapter()
+    private val movieBrowserAdapter = MovieBrowserAdapter(picasso)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

@@ -1,6 +1,5 @@
 package me.zwsmith.moviefinder.presentation.movieBrowser
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,6 +9,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import me.zwsmith.moviefinder.core.models.extensions.MovieListItem
 import me.zwsmith.moviefinder.core.repositories.MovieRepository
+import me.zwsmith.moviefinder.core.services.Genre
 
 class MovieBrowserViewModel(private val movieRepository: MovieRepository) : ViewModel() {
 
@@ -21,32 +21,29 @@ class MovieBrowserViewModel(private val movieRepository: MovieRepository) : View
 
     fun loadMovies() {
         viewModelScope.launch {
-            try {
-                val viewState = withContext(Dispatchers.IO) {
-                    MovieBrowserViewState(
-                        isLoadingVisible = false,
-                        isErrorVisible = false,
-                        moviesList = movieRepository.getPopularMovies(1)
-                            .map {
-                                Log.d(TAG, it.toString())
-                                it.toMovieRowViewState()
-                            }
-                    )
-                }
-                _viewStates.postValue(viewState)
-            } catch (exception: Exception) {
-                throw exception
+            val viewState = withContext(Dispatchers.Default) {
+                val genres = movieRepository.getGenres()
+                val popularMovies = movieRepository.getPopularMovies(1)
+                MovieBrowserViewState(
+                    isLoadingVisible = false,
+                    isErrorVisible = false,
+                    moviesList = popularMovies.map {
+                        buildMovieRowViewState(it, genres)
+                    }
+                )
             }
+            _viewStates.postValue(viewState)
         }
     }
 
-    private fun MovieListItem.toMovieRowViewState(): MovieBrowserViewState.RowViewState {
+    private fun buildMovieRowViewState(movieListItem: MovieListItem, genres: List<Genre>): MovieBrowserViewState.RowViewState {
         return MovieBrowserViewState.RowViewState(
-            id,
-            title,
-            popularity.toString(),
-            posterPath?.let { IMAGE_BASE_URL + it },
-            onClick = { _movieSelection.postValue(id) }
+            movieListItem.id,
+            movieListItem.title,
+            movieListItem.rating.toString(),
+            movieListItem.genreIds.map { genreId -> genres.first { it.id == genreId }.name },
+            movieListItem.posterPath?.let { IMAGE_BASE_URL + it },
+            onClick = { _movieSelection.postValue(movieListItem.id) }
         )
     }
 
@@ -64,7 +61,8 @@ data class MovieBrowserViewState(
     data class RowViewState(
         val id: String,
         val title: String,
-        val popularity: String,
+        val rating: String,
+        val genres: List<String>,
         val imageUrl: String?,
         val onClick: () -> Unit
     )

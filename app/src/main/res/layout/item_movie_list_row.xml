@@ -19,18 +19,42 @@
         android:paddingStart="@dimen/spacing_small"
         android:paddingEnd="@dimen/spacing_small">
 
+        <TextView
+            android:id="@+id/genres_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/genres"
+            android:textColor="@color/text_primary_dark"
+            android:textSize="@dimen/text_small"
+            card_view:layout_constraintBottom_toBottomOf="parent"
+            card_view:layout_constraintStart_toEndOf="@+id/poster_icon"
+            card_view:layout_constraintTop_toBottomOf="@+id/rating" />
+
+        <TextView
+            android:id="@+id/rating_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            android:text="@string/rating"
+            android:textColor="@color/text_primary_dark"
+            android:textSize="@dimen/text_small"
+            card_view:layout_constraintStart_toEndOf="@+id/poster_icon"
+            card_view:layout_constraintTop_toBottomOf="@+id/title_tv" />
+
         <ImageView
             android:id="@+id/poster_icon"
-            android:layout_width="0dp"
+            android:layout_width="45dp"
             android:layout_height="0dp"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:contentDescription="@string/movie_icon"
             card_view:layout_constraintBottom_toBottomOf="parent"
             card_view:layout_constraintStart_toStartOf="parent"
             card_view:layout_constraintTop_toTopOf="parent"
-            tools:layout_width="45dp"
             tools:src="@drawable/ic_android"
             tools:tint="@color/colorPrimary" />
 
@@ -40,38 +64,39 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/text_primary_dark"
             android:textSize="@dimen/text_small"
             android:textStyle="bold"
             card_view:layout_constraintStart_toEndOf="@+id/poster_icon"
             card_view:layout_constraintTop_toTopOf="parent"
-            tools:text="Kim Holmes" />
+            tools:text="Avengers" />
 
         <TextView
-            android:id="@+id/popularity_tv"
+            android:id="@+id/rating"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="4dp"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/text_primary_dark"
             android:textSize="@dimen/text_small"
-            card_view:layout_constraintStart_toEndOf="@+id/poster_icon"
+            card_view:layout_constraintStart_toEndOf="@+id/rating_label"
             card_view:layout_constraintTop_toBottomOf="@+id/title_tv"
-            tools:text="Open Groove Choreography" />
+            tools:text="8" />
 
         <TextView
-            android:id="@+id/date_time_tv"
+            android:id="@+id/genres"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="8dp"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/text_primary_dark"
             android:textSize="@dimen/text_small"
             card_view:layout_constraintBottom_toBottomOf="parent"
-            card_view:layout_constraintStart_toEndOf="@+id/poster_icon"
-            card_view:layout_constraintTop_toBottomOf="@+id/popularity_tv"
-            tools:text="Open Groove Choreography" />
+            card_view:layout_constraintStart_toEndOf="@+id/genres_label"
+            card_view:layout_constraintTop_toBottomOf="@+id/rating"
+            card_view:layout_constraintVertical_bias="0.0"
+            tools:text="Genre" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

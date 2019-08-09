@@ -6,7 +6,8 @@ import kotlin.math.roundToInt
 data class MovieListItem(
     val id: String,
     val title: String,
-    val popularity: Int,
+    val rating: Int,
+    val genreIds: List<Int>,
     val posterPath: String?
 )
 
@@ -14,7 +15,8 @@ fun PopularMovie.toMovieListItem(): MovieListItem {
     return MovieListItem(
         id.toString(),
         title,
-        popularity.roundToInt(),
+        voteAverage.roundToInt(),
+        genreIds,
         posterPath
     )
 }
