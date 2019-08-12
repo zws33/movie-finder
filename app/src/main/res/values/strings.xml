@@ -6,4 +6,7 @@
     <string name="retry">Retry</string>
     <string name="error_icon">Error Icon</string>
     <string name="movie_poster">Movie Poster</string>
+    <string name="next">Next</string>
+    <string name="rating">Rating</string>
+    <string name="genres">Genres</string>
 </resources>
